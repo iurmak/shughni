@@ -1,6 +1,31 @@
-#compounds
+#acute in the letter (letters that inculde acute in them)
+á a
+á a
+é e
+é e
+í i
+í i
+ó o
+ó o
+ú u
+ú u
+#cyrillic to latin (converting identical symbols to latin in order to avoid confusion in the future)
+А a
+а a
+О o
+о o
+Е e
+е e
+Х x
+х x
+#other
+ƺ ʒ
+ʓ ʒ
+#compounds (dighraphs and symbols with diacritics not included)
 Аа ā
 аа ā
+U̯ w
+u̯ w
 Вь w
 вь w
 В̌ w
@@ -21,6 +46,10 @@
 з̌ ʒ
 Dz ʒ
 dz ʒ
+É i
+é i
+Ẹ i
+ẹ i
 Ии ī
 ии ī
 Оо ō
@@ -35,10 +64,10 @@ dz ʒ
 уо ů
 У̊ ů
 у̊ ů
-Хь ӿ
-хь ӿ
-Х̌ ӿ
-х̌ ӿ
+Xь ӿ
+xь ӿ
+X̌ ӿ
+x̌ ӿ
 Ts c
 ts c
 Tɕ č
@@ -47,8 +76,6 @@ dʑ ǯ
 Sh š
 sh š
 #noncompounds
-А a
-а a
 Æ ā
 æ ā
 Б b
@@ -84,14 +111,14 @@ ē e
 ę i
 É i
 é i
+Ẹ i
+ẹ i
 И i
 и i
 Ӣ ī
 ӣ ī
 Й j
 й j
-Y j
-y j
 К k
 к k
 Қ q
@@ -125,8 +152,8 @@ y j
 ё ö
 Ф f
 ф f
-Х χ
-х χ
+X χ
+x χ
 X χ
 x χ
 Ҳ h
@@ -137,6 +164,8 @@ x χ
 ч č
 Ҷ ǯ
 ҷ ǯ
+J ǯ
+j ǯ
 ǰ ǯ
 ǰ ǯ
 Ш š
@@ -144,3 +173,8 @@ x χ
 ɕ š
 ɕ š
 #
+Y j
+y j
+́ 
+̣ 
+# (DO NOT DELETE THE LAST #HASH / SHARP / OCTOTHORPE SYMBOL!!! THANK YOU!!!)
