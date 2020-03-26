@@ -112,7 +112,7 @@ def make_perfmasc(praestem, deaf):                                  #функц�
 
 def systembuilding():                                               #основная функция для сборки словаря из файла с исключениями и образования регулярных форм
     vocab = []
-    with open('verbs.txt', 'r', encoding='utf-8') as file:
+    with open('vocab.txt', 'r', encoding='utf-8') as file:
         for line in file:
             if not line.startswith('#'):
                 vocab.append(line)                                      #читаем файл verbs, в котором лежит список глагольных основ
