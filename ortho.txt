@@ -1,4 +1,4 @@
-#acute in the letter (letters that inculde acute in them)
+#acute in the letter
 á a
 á a
 é e
@@ -9,7 +9,7 @@
 ó o
 ú u
 ú u
-#cyrillic to latin (converting identical symbols to latin in order to avoid confusion in the future)
+#cyrillic to latin
 А a
 а a
 О o
@@ -21,21 +21,21 @@
 #other
 ƺ ʒ
 ʓ ʒ
-#compounds (dighraphs and symbols with diacritics not included)
-Аа ā
-аа ā
+#compounds
+Aa ā
+aa ā
 U̯ w
 u̯ w
 Вь w
 вь w
 В̌ w
 в̌ w
-Гь γ
-гь γ
-Г̌ γ
-г̌ γ
-Ɣ̌ γ
-ɣ̌ γ
+Гь ұ
+гь ұ
+Г̌ ұ
+г̌ ұ
+Ɣ̌ ұ
+ɣ̌ ұ
 Дъ ð
 дъ ð
 Д̌ ð
@@ -52,16 +52,16 @@ Ẹ i
 ẹ i
 Ии ī
 ии ī
-Оо ō
-оо ō
+Oo ō
+oo ō
 Тъ θ
 тъ θ
 Т̌ θ
 т̌ θ
 Уу ū
 уу ū
-Уо ů
-уо ů
+Уo ů
+уo ů
 У̊ ů
 у̊ ů
 Xь ӿ
@@ -88,7 +88,7 @@ sh š
 ғ ʁ
 Ɣ ʁ
 ɣ ʁ
-ǯ γ
+ǯ ұ
 Д d
 д d
 Δ ð
@@ -105,6 +105,8 @@ ē e
 ж ž
 З z
 з z
+Ҙ ʒ
+ҙ ʒ
 Ⱬ ʒ
 ⱬ ʒ
 Ę i
@@ -177,4 +179,4 @@ Y j
 y j
 ́ 
 ̣ 
-# (DO NOT DELETE THE LAST #HASH / SHARP / OCTOTHORPE SYMBOL!!! THANK YOU!!!)
+#
