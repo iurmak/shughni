@@ -31,7 +31,7 @@ def textreading():
     while '  ' in text:
         text = text.replace('  ', ' ')
     print('/Text read.')
-    #print(text)
+    print(text)
     return text
 
 def slash_n_delete(stroka):                                         #функция удаляет \n из концов строк в словаре глаголов (для systembuilding)
@@ -133,6 +133,7 @@ def spacedivision(text):                                            #функц�
     while text.find(' ', iword+1, len(text)-1) > -1:
         iword = text.find(' ', iword+1, len(text)-1) + 1
         iwords.append(iword)                                            #iwords собирает номера тех символов текста, которые являются пробелами
+    iwords.append(len(text))                                            #это нужно, чтобы при вычленении слов последнее слово включалось в список
     return iwords
 
 def isitpraestem(word, stem):                                       #функция проверяет, не является ли слово глагольной формой, образованной от praestem (для formdefinition)
@@ -141,15 +142,41 @@ def isitpraestem(word, stem):                                       #функц�
     flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
     for flexia in flexias:
         if word.endswith(stem+flexia):
-            attribute = 'PRS-'+flexias[flexia]                          #attribute — строка с глоссированием слова
-    if stem+'īǯ' in word:
-        attribute = 'AGENT_NOUN'
+            attribute = '.PRS-'+flexias[flexia]                        #attribute — строка с глоссированием слова
+    if attribute == False:
+        if stem+'īǯ' in word:
+            attribute = '-AGENT_NOUN'
+    return attribute
+
+def isitsg1c(word, praesstems):                                     #функция проверяет, не является ли слово стяжённой формой 1 лица ед. числа praesstem (для verbfind)
+    attribute = False
+    if attribute == False:
+        for stem in praesstems:
+            if word.endswith(stem[0:len(stem)-1]+'m'):
+                attribute = '.PRS.1SG'
+    if attribute == False:
+        for stem in praesstems:
+            vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö', 'ů')
+            for a in range(len(stem)):
+                if stem[a] in vowels:
+                    ivowel = a
+            ivowel = len(stem)-ivowel
+            if stem[len(stem)-ivowel] == 'a':
+                stem = stem[0:len(stem)-ivowel]+'ā'
+            elif stem[len(stem)-ivowel] == 'i':
+                stem = stem[0:len(stem)-ivowel]+'ī'
+            elif stem[len(stem)-ivowel] == 'o':
+                stem = stem[0:len(stem)-ivowel]+'ō'
+            elif stem[len(stem)-ivowel] == 'u':
+                stem = stem[0:len(stem)-ivowel]+'ū'
+            if word.endswith(stem[0:len(stem)]+'m'):
+                attribute = '.PRS.1SG'
     return attribute
 
 def isitpraes3sg(word, stem):                                       #функция проверяет, не является ли слово глагольной формой praes3sg (для formdefinition)
     word = word.replace('-', '')
     if word.endswith(stem):
-        attribute = 'PRS.3SG'                                           #attribute — строка с глоссированием слова
+        attribute = '.PRS.3SG'                                           #attribute — строка с глоссированием слова
     else:
         attribute = False
     return attribute
@@ -162,22 +189,39 @@ def isitpasttnse(word, stem, y):                                    #функц�
         if word.endswith(stem+flexia):
             if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
                 if y == 4:
-                    attribute = 'PST.PL-'+flexias[flexia]
+                    attribute = '.PST.PL-'+flexias[flexia]
                 if y == 3:
-                    attribute = 'PST.SG-'+flexias[flexia]
+                    attribute = '.PST.SG-'+flexias[flexia]
             else:
                 if y == 4:
-                    attribute = 'PST.F-'+flexias[flexia]
+                    attribute = '.PST.F-'+flexias[flexia]
                 if y == 3:
-                    attribute = 'PST.M-'+flexias[flexia]                #attribute — строка с глоссированием слова
+                    attribute = '.PST.M-'+flexias[flexia]                #attribute — строка с глоссированием слова
+        else:
+            attribute = False
+    return attribute
+
+def isitperftnse(word, stem, y):
+    word = word.replace('-', '')
+    word = word.replace('=', '')
+    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+    for flexia in flexias:
+        if word.endswith(stem+flexia):
+            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
+                if y == 4:
+                    attribute = '.PST.PL-'+flexias[flexia]
+                if y == 3:
+                    attribute = '.PST.SG-'+flexias[flexia]
+            else:
+                if y == 4:
+                    attribute = '.PST.F-'+flexias[flexia]
+                if y == 3:
+                    attribute = '.PST.M-'+flexias[flexia]                #attribute — строка с глоссированием слова
         else:
             attribute = False
     return attribute
 
 '''
-def isitperftnse(word, stem, y):
-
-
 def isitinfinite(word, stem):
 '''
 
@@ -202,18 +246,21 @@ def verbfind(text, vocab):                                          #основ�
         word = word.replace(' ', '')                                    #word — это слово, в отношении которого программа пытается понять, является ли оно глаголом
         
         glossfoundsinword = []
-        for x in range(len(vocab)):
-            for y in range(1, len(vocab[x])):
+        for x in range(len(vocab)):   #для каждой леммы:
+            for y in range(1, len(vocab[x])):   #для каждой основы:
                 for z in range(len(vocab[x][y])):                       #залезаем в словарь и смотрим, не содержит ли word одну из глагольных основ / форм из словаря vocab
                     if vocab[x][y][z] in word:
-                        attribute = formdefinition(word, vocab[x][y][z], y)
-                        formfound = False                               #attribute — строка с глоссированием слова
-                        if not attribute == False:
-                            formfound = True
-                        if formfound:
-                            glossfoundsinword.append(attribute)        #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
+                        attribute = formdefinition(word, vocab[x][y][z], y)                    
+                        if not attribute == False:                      #attribute — строка с глоссированием слова
+                            attribute = vocab[x][0][0].replace(' ', '_')+attribute
+                            glossfoundsinword.append(attribute)         #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
+            if word.endswith('m'):                                      #если слово оканчивается на 'm', возможно, это стяжённая форма 1 лица ед. числа презенса?
+                attribute = isitsg1c(word, vocab[x][1])
+                if not attribute == False:
+                    attribute = vocab[x][0][0].replace(' ', '_')+attribute
+                    glossfoundsinword.append(attribute)
         if not glossfoundsinword == []:
-            glossfounds.append([word, iwords[a], iwords[a+1]-1, glossfoundsinword]) #glossfounds собирает все глоссирования для глаголов в тексте
+            glossfounds.append([word, iwords[a], iwords[a+1]-1, glossfoundsinword]) #glossfounds собирает все глоссирования глаголов в тексте
     print(glossfounds)
     print('/Verbs found.')
 
