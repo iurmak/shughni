@@ -123,7 +123,7 @@ def systembuilding():                                               #основ�
         for j in range(len(vocab[i])):
             if vocab[i][j][0] == '0':
                 vocab[i][j] = vocab[i][j-1]                             #ячейки с '0' заполняются значениями слева
-    #print(vocab)
+    print(vocab)
     print('/System built.')
     return vocab
 
@@ -175,15 +175,15 @@ def isitsg1c(word, praesstems):                                     #функц�
 
 def isitpraes3sg(word, stem):                                       #функция проверяет, не является ли слово глагольной формой praes3sg (для formdefinition)
     word = word.replace('-', '')
+    attribute = False
     if word.endswith(stem):
         attribute = '.PRS.3SG'                                           #attribute — строка с глоссированием слова
-    else:
-        attribute = False
     return attribute
 
 def isitpasttnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от pastmasc / pastfepl (для formdefinition)
     word = word.replace('-', '')
     word = word.replace('=', '')
+    attribute = False
     flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
     for flexia in flexias:
         if word.endswith(stem+flexia):
@@ -197,33 +197,34 @@ def isitpasttnse(word, stem, y):                                    #функц�
                     attribute = '.PST.F-'+flexias[flexia]
                 if y == 3:
                     attribute = '.PST.M-'+flexias[flexia]                #attribute — строка с глоссированием слова
-        else:
-            attribute = False
     return attribute
 
-def isitperftnse(word, stem, y):
+def isitperftnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от perfmasc / perffemn / perfplur (для formdefinition)
     word = word.replace('-', '')
     word = word.replace('=', '')
     flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+    attribute = False
     for flexia in flexias:
         if word.endswith(stem+flexia):
             if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
-                if y == 4:
-                    attribute = '.PST.PL-'+flexias[flexia]
-                if y == 3:
-                    attribute = '.PST.SG-'+flexias[flexia]
+                if y == 7:
+                    attribute = '.PRF.PL-'+flexias[flexia]
+                    print(y)
             else:
-                if y == 4:
-                    attribute = '.PST.F-'+flexias[flexia]
-                if y == 3:
-                    attribute = '.PST.M-'+flexias[flexia]                #attribute — строка с глоссированием слова
-        else:
-            attribute = False
+                if y == 6:
+                    attribute = '.PRF.F-'+flexias[flexia]
+                if y == 5:
+                    attribute = '.PRF.M-'+flexias[flexia]               #attribute — строка с глоссированием слова
     return attribute
 
-'''
-def isitinfinite(word, stem):
-'''
+def isitinfinite(word, stem):                                       #функция проверяет, не является ли слово глагольной формой, образованной от infinite (для formdefinition)
+    word = word.replace('-', '')
+    attribute = False
+    if word.endswith(stem+'ow'):
+        attribute = '.INF-INF2'
+    elif word.endswith(stem):
+        attribute = '.INF'                                              #attribute — строка с глоссированием слова
+    return attribute
 
 def formdefinition(word, stem, y):                                  #коммутатор, выявляющий, какая из основ найдена в слове, и перенаправляющий к нужной функции (для verbdivision)
     if y == 1:
@@ -263,7 +264,8 @@ def verbfind(text, vocab):                                          #основ�
             glossfounds.append([word, iwords[a], iwords[a+1]-1, glossfoundsinword]) #glossfounds собирает все глоссирования глаголов в тексте
     print(glossfounds)
     print('/Verbs found.')
+    return glossfounds
 
 vocab = systembuilding()
 text = textreading()
-verbfind(text, vocab)
+glossfounds = verbfind(text, vocab)
