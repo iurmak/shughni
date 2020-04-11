@@ -22,3 +22,4 @@ mix up	kaχc	kaχct	kiχt	0	kiχč	0	0	kiχt,kaχct
 инф. м. = InfM
 (InfM .*? )(ж.) = InfF
 инф. = Inf
+сокр. тж. = Short
