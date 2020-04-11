@@ -1,8 +1,14 @@
 #[0]* vrblemma, [1] praesstem, [2] praes3sg, [3] pastmasc, [4] pastfepl, [5] perfmasc/perf, [6] perffemn, [7] perfplur, [8] infinite/infinitiveMasc, [9]infinitiveFem (в будущем можем прикрутить [9] imperate, [10] causativ; пока не добавляем)
-with open('2tmk_verbs.txt', encoding='utf-8') as f:
+def cleaning(str): #deletes all the unneeded punctuation and lowers the string
+    for punct in '=:;.,':
+        str = str.replace(punct,'').lower()
+    return str
+
+with open('verbs0.txt', encoding='utf-8') as f:
     text = f.read()
 text = text.split('\n')
 res = []
+result = []
 while '' in text:
     text.remove('') # text — лист из словарных статей глаголов, где каждая статья — строка (пустые строки удалены)
 for i in range(len(text)):
@@ -74,4 +80,10 @@ for i in range(len(text)):
             t = b.index('InfF')
             sm[9] = b[t+1]
         res.append(sm)
-print(res)
+for i in res:
+    i = '#'.join(i)
+    i = cleaning(i)
+    result.append(i)
+
+with open('v_ordered.txt', 'w', encoding='utf-8') as f:
+    f.write('\n'.join(result))
