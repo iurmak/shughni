@@ -1,8 +1,21 @@
-Юра:
-- исследовать том 2 словаря, понять, как устроена словарная статья для глагольных форм,
-- извлечь из словарных статей (см. выше) глагольные формы, имеющиеся там.
+BUGS
+* spaces in the output.txt
 
-Макс:
-- написать функцию для образования регулярных форм
-- написать функцию для добавления исключений
-- тестирование конвертера
+CONTENT
+* praefemn
+* infifemn
+* other forms (ma-)
+* universal dependencies
+* ziweð-ēn-xu???
+* ði + en => ðen
+
+ADDITIONAL
+* irregular forms
+
+FEATURES
+* mixed orthography warner
+
+TRIVIA
+* тестирование
+* interface
+* help and readme
