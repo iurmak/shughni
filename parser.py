@@ -14,7 +14,7 @@ def orthoconv(text):                                                #функц�
             while bad in text:
                 good = good[0:len(good)-1]
                 text = text.replace(bad, good)                          #плохие символы заменяются на хорошие
-                print(bad+' > '+good)
+                #print(bad+' > '+good)
     print('     /Orthography converted.')
     return text
 
@@ -174,7 +174,6 @@ def isitcontract(word, praesstems):                                 #функц�
     attributes = []
     vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
     for stem in praesstems:
-        print(stem)
         attribute = False
         ivowel = len(stem)-1
         for a in range(1,len(stem)):
@@ -182,7 +181,6 @@ def isitcontract(word, praesstems):                                 #функц�
                 ivowel = a
 
         ivowel = len(stem)-ivowel
-        #print(stem[len(stem)-ivowel])
         if word.endswith('m'):
             if stem[len(stem)-ivowel] == 'a':
                 stem = stem[0:len(stem)-ivowel]+'ā'
@@ -192,15 +190,14 @@ def isitcontract(word, praesstems):                                 #функц�
                 stem = stem[0:len(stem)-ivowel]+'ō'
             elif stem[len(stem)-ivowel] == 'u':
                 stem = stem[0:len(stem)-ivowel]+'ū'
-            if word.endswith(stem+'m'):
+            if word == stem+'m':
                 attribute = 'PRS.1SG'                                   #стяжённая форма 1 лица ед. ч.
         elif word.endswith('en') or word.endswith('et'):
             if ivowel <3:
                 stem = stem[0:len(stem)-ivowel]
-                print(stem+' '+str(ivowel))
-                if word.endswith(stem+'et'):
+                if word == stem+'et':
                     attribute = 'PRS.2PL'                                   #стяжённая форма 2 лица мн. ч.
-                if word.endswith(stem+'en'):
+                if word == stem+'en':
                     attribute = 'PRS.3PL'                                   #стяжённая форма 3 лица мн. ч.
         if not attribute == False:
             attribute = isitnegative(word, stem)+attribute
@@ -296,12 +293,14 @@ def formdefinition(word, stem, y):                                  #комму�
         attribute = isitperftnse(word, stem, y)
     if y == 8 or y == 9:
         attribute = isitinfinite(word, stem, y)
+    if not attribute == False:
+        attribute = isitnegative(word, stem)+attribute
     return attribute
 
 def nedostatochny_stem(stems):
-    nedost = True
-    if not '-' in stems:
-        nedost = False
+    nedost = False
+    if '-' in stems:
+        nedost = True
     return nedost
 
 def verbfind(text, vocab):                                          #основная функция для поиска глагольных форм в тексте
@@ -322,14 +321,14 @@ def verbfind(text, vocab):                                          #основ�
                         if vocab[x][y][z] in wordnew:
                             attribute = formdefinition(wordnew, vocab[x][y][z], y)
                             if not attribute == False:                  #attribute — строка с глоссированием слова
-                                attribute = vocab[x][y][0]+'-'+isitnegative(word, vocab[x][y][z])+attribute
+                                attribute = vocab[x][y][0]+' > '+attribute
                                 glossfoundsinword.append(attribute)     #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
-            if word.endswith('m') or word.endswith('n') or word.endswith('t') and not nedostatochny_stem(vocab[x][0]):
-                wordnew = wordclean(word)
-                if not isitcontract(wordnew, vocab[x][1]) == []:           #если слово оканчивается на m, t или n, возможно, это стяжённая форма презенса?
-                    for attribute in isitcontract(wordnew, vocab[x][1]):
-                        attribute = vocab[x][y][0]+'-'+attribute
-                        
+            if word.endswith('m') or word.endswith('n') or word.endswith('t'):
+                if not nedostatochny_stem(vocab[x][0]):
+                    wordnew = wordclean(word)
+                    if not isitcontract(wordnew, vocab[x][0]) == []:           #если слово оканчивается на m, t или n, возможно, это стяжённая форма презенса?
+                        for attribute in isitcontract(wordnew, vocab[x][0]):
+                            attribute = vocab[x][0][0]+' > '+attribute
                         glossfoundsinword.append(attribute)
         if not glossfoundsinword == []:
             glossfoundsinword = deleteidentical(glossfoundsinword)
