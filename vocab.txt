@@ -149,7 +149,7 @@ zaq	0	1	zaqt	0	zaqč	0	0	zaqt	0
 zɛz	0	zɛzd	zoӿt	0	zoӿč	0	0	zɛӿt	0
 zi	0	zed	zod	0	1	zɛc	zoðǯ	zɛd	0
 zibakc	0	1	zibakct	0	zibakcč	0	0	zibakct	0
-ziban	0	эibīnt	zibud	zibad	zibuvǯ/zibūðǯ	zibic	č	zibid	0
+ziban	0	zibīnt	zibud	zibad	zibuvǯ/zibūðǯ	zibic	č	zibid	0
 zibɛt	0	1	zibɛtt/zibɛt	0	zibɛtč	0	0	zibɛt	0
 ziwɛð	0	ziweðd	ziwost	0	ziwosč	0	0	ziwɛst	0
 zigaren	0	1	zigarent	0	zigarenč	0	0	zigarent	0
@@ -182,7 +182,7 @@ kigīӿ	0	1	kigīӿt	0	kigīӿč	0	0	kigīӿt	0
 kidɛʒ/kidɛz	0	1	kidūīd/kidɛʒd/kidɛzd	0	kidūǯǯ/kidɛʒǯ/kidɛzǯ	0	0	kidɛʒd/kidɛzd	0
 kidoǯs	0	1	kidūǯd	kidoǯd	kidūǯǯ	kidoǯǯ	0	kidīǯd/kidīd	0
 kilaχ	0	1	kilaχt	0	kilaχč	0	0	kilaχt	0
-kin/kan	0	kiӿt	čūd	0	1	0	0	čīd	0
+kin/kan	0	kiӿt	čūd/čuh	0	čūұǯ/čīұʒ	0	0	čīd/či	0
 kir	0	1	kirt	0	kirč	0	0	kirt	0
 kirānd/kirand	0	kirönt/kirīnt	kirūst/kirust	0	kirūsč/kirusč	0	0	kirīst/kirist	0
 kirɛz	0	1	kirɛzd/kirīwst	0	kirɛzǯ	0	0	kirɛzd	0
@@ -287,7 +287,7 @@ piðafc	0	piðafct	piðūvd	piðovd/piðāvd	piðūvǯ	piðīvʒ	piðovǯ/piðā
 piðemb	0	1	piðembt/piðemt	0	piðemč	0	0	piðembt/piðemt	0
 piðin	0	piðīnt	piðid	0	piðiðǯ	0	0	piðid	0
 piðis	0	piðist	piðid	0	piðivǯ/piðīðǯ	piðic	0	piðid/piðist	0
-piǯ/pi	0	ped	pud	pad	puðǯ/pūðǯ	pic	paðǯ/poðǯ	pid	0
+pij/pi	0	ped	pud	pad	pujǯ/pūjǯ	pic	pajǯ/pojǯ	pid	0
 piniʒ	0	pinīzd/pinīʒd	pinūǯd	0	pinūǯǯ	0	0	pinīwd	0
 pirend	0	1	pirent	0	pirenč	0	0	pirent	0
 pireӿ	0	1	pireӿt	0	pireӿč	0	0	pireӿt	0
