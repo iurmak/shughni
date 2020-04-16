@@ -1,13 +1,14 @@
 def everythingalright():                                            #функция определяет, все ли необходимые для работы программы файлы лежат в директории
     alright = False
     import os
-    if os.path.isfile('./text.txt') and os.path.isfile('./vocab.txt') and os.path.isfile('./output.txt') and os.path.isfile('./ortho.txt') and os.path.isfile('./help.txt'):
+    if os.path.isfile('./text.txt') and os.path.isfile('./vocab.txt') and os.path.isfile('./ortho.txt') and os.path.isfile('./help.txt'):
         alright = True
     return alright
 
 def orthoconv(text):                                                #функция конвертирует орфографию
     with open('ortho.txt', 'r', encoding='utf-8') as file:
         ortho = file.readlines()
+    goodlist = []
     for line in ortho:
         if not line.startswith('#'):                                    #с решёточки начинаются служебные строки в файле ortho
             bad, good = line.split(' ')
@@ -15,7 +16,19 @@ def orthoconv(text):                                                #функц�
                 good = good[0:len(good)-1]
                 text = text.replace(bad, good)                          #плохие символы заменяются на хорошие
                 #print(bad+' > '+good)
-    print('     /Orthography converted.')
+    '''
+            goodlist.append(good)
+    goodstring = ''
+    for symbol in goodlist:
+        goodstring = goodstring+symbol
+    goodstring = goodstring.replace('\n', '')+' '
+    for i in range(len(goodstring)-1):
+        if goodstring[i] == goodstring[i+1]:
+            goodstring[0:i]+' '+goodstring[i+1:len(goodstring)]
+    goodstring = goodstring.replace(' ', '')
+    with open('ortholist.txt', 'w', encoding='utf-8') as file:
+        file.write(goodstring)
+    '''
     return text
 
 def textreading(orthoneed):                                         #функция читает текст из файла text и чистит его
@@ -44,6 +57,7 @@ def textreading(orthoneed):                                         #функц�
 def deleteidentical(spisok):                                        #функция удаляет одинаковые элементы списка
     n = []
     for element in spisok:
+        
         if '.M' in element:
             if element.replace('.M', '.F') in spisok:
                 n.append(element.replace('.M', ''))
@@ -52,7 +66,7 @@ def deleteidentical(spisok):                                        #функц�
                 n.append(element.replace('.F', ''))
         else:
             n.append(element)
-    
+        
     q = []
     for element in n:
         if element not in q:
@@ -72,11 +86,11 @@ def listen(stroka):                                                 #функц�
     return(spisok)
 
 def derivation(vocab):                                              #коммутатор, выявляющий, какую форму нужно образовать, и перенаправляющий к нужной функции (для systembuilding)
-    voiced = ('b', 'v', 'w', 'g', 'd', 'ð', 'ž', 'z', 'j', 'm', 'ʒ', 'č', 'ʁ', 'h', 'ǯ', 'ұ')
-    deaf = ('θ', 'k', 'p', 's', 't', 'f', 'χ', 'ӿ', 'c', 'č', 'š', 'q', 'l', 'r', 'm', 'n')
+    voiced = ('b', 'v', 'g', 'd', 'ð', 'ž', 'z', 'ʒ', 'ʁ', 'ǯ', 'ұ')
+    deaf = ('θ', 'k', 'p', 's', 't', 'f', 'χ', 'ӿ', 'c', 'č', 'š', 'q', '''l', 'r', 'm', 'n''')
     for i in range(len(vocab)):
         if vocab[i][2][0] == '1':
-            vocab[i][2] = make_praes3sg(vocab[i][0], deaf)              #форма презенса 3 л. ед. ч. образуется из основы презенса
+            vocab[i][2] = make_praes3sg(vocab[i][0], deaf, voiced)      #форма презенса 3 л. ед. ч. образуется из основы презенса
         if vocab[i][3][0] == '1':
             vocab[i][3] = make_pastmasc(vocab[i][1], deaf)              #основа претерита образуется из основы презенса
         if vocab[i][5][0] == '1':
@@ -85,7 +99,7 @@ def derivation(vocab):                                              #комму�
             vocab[i][8] = vocab[i][3]                                   #основа инфинитива совпадает с основой претерита
     return(vocab)
 
-def make_praes3sg(praestem, deaf):                                  #функция образует форму презенса 3 л. ед. ч. из основы презенса (для derivation)
+def make_praes3sg(praestem, deaf, voiced):                          #функция образует форму презенса 3 л. ед. ч. из основы презенса (для derivation)
     form = []
     for variation in praestem:
         if variation[len(variation)-2:len(variation)] == 'mb' or variation[len(variation)-2:len(variation)] == 'nb':
@@ -94,10 +108,10 @@ def make_praes3sg(praestem, deaf):                                  #функц�
             variation = variation[0:len(variation)-1]+'z'               #если основа оканч. на ʒ, то она заменяется на z
         if variation[len(variation)-1] == 'c':
             variation = variation[0:len(variation)-1]+'s'               #если основа оканч. на c, то она заменяется на s
-        if variation[len(variation)-1] in deaf:
-            form.append(variation+'t')
-        else:
-            form.append(variation+'d')                                  #если основа оканч. на глухой, то присоединяется -t, иначе — на -d
+        if variation[len(variation)-1] not in deaf:
+            form.append(variation+'d')
+        if variation[len(variation)-1] not in voiced:
+            form.append(variation+'t')                                  #если основа оканч. на глухой, то присоединяется -t, иначе — на -d
     return form
 
 def make_pastmasc(praestem, deaf):                                  #функция образует основу претерита из основы презенса (для derivation)
@@ -171,17 +185,24 @@ def wordclean(word):                                                #очища�
     return word
 
 def isitpraestem(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от praestem (для formdefinition)
-    stem = jification(stem)
     if y == 0:
         gender = 'M'
     if y == 1:
         gender = 'F'
-    
     attribute = False
-    flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL', 'ēn': '3PL'}
-    for flexia in flexias:
-        if word == stem+flexia:
-            attribute = 'PRS.'+gender+'-'+flexias[flexia]               #attribute — строка с глоссированием слова
+    
+    if word.endswith('d') or word.endswith('t'):
+        flexias = ('d', 't')
+        for flexia in flexias:
+            if word == stem+flexia:
+                attribute = 'PRS.'+gender+'-'+'3SG'                     #attribute — строка с глоссированием слова
+    
+    if attribute == False:
+        stem = jification(stem)
+        flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL', 'ēn': '3PL'}
+        for flexia in flexias:
+            if word == stem+flexia:
+                attribute = 'PRS.'+gender+'-'+flexias[flexia]           #attribute — строка с глоссированием слова
     if attribute == False:
         if word == stem+'īǯ':
             attribute = 'AGENT_NOUN'
@@ -387,3 +408,4 @@ if everythingalright():
     interface()
 else:
     print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
+    exit =  input()
