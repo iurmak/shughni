@@ -43,10 +43,21 @@ def textreading(orthoneed):                                         #функц�
 
 def deleteidentical(spisok):                                        #функция удаляет одинаковые элементы списка
     n = []
-    for i in spisok:
-        if i not in n:
-            n.append(i)
-    return n
+    for element in spisok:
+        if '.M' in element:
+            if element.replace('.M', '.F') in spisok:
+                n.append(element.replace('.M', ''))
+        elif '.F' in element:
+            if element.replace('.F', '') in n:
+                n.append(element.replace('.F', ''))
+        else:
+            n.append(element)
+    
+    q = []
+    for element in n:
+        if element not in q:
+            q.append(element)
+    return q
 
 def slash_n_delete(stroka):                                         #функция удаляет \n из концов строк в словаре глаголов (для systembuilding)
     if stroka.endswith('\n'):
@@ -156,21 +167,27 @@ def wordclean(word):                                                #очища�
     word = word.replace('-', '')
     word = word.replace('=', '')
     word = word.replace(' ', '')
+    word = word.replace('.', '')
     return word
 
 def isitpraestem(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от praestem (для formdefinition)
     stem = jification(stem)
+    if y == 0:
+        gender = 'M'
+    if y == 1:
+        gender = 'F'
+    
     attribute = False
     flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL', 'ēn': '3PL'}
     for flexia in flexias:
         if word == stem+flexia:
-            attribute = 'PRS-'+flexias[flexia]                          #attribute — строка с глоссированием слова
+            attribute = 'PRS.'+gender+'-'+flexias[flexia]               #attribute — строка с глоссированием слова
     if attribute == False:
         if word == stem+'īǯ':
             attribute = 'AGENT_NOUN'
     return attribute
 
-def isitcontract(word, praesstems):                                 #функция проверяет, не является ли слово стяжённой формой 1 лица ед. числа praesstem (для verbfind)
+def isitcontract(word, praesstems):                                 #функция проверяет, не является ли слово стяжённой формой praesstem (для verbfind)
     attributes = []
     vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
     for stem in praesstems:
@@ -228,6 +245,13 @@ def isitpasttnse(word, stem, y):                                    #функц�
     return attribute
 
 def isitperftnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от perfmasc / perffemn / perfplur (для formdefinition)
+    if y == 5:
+        gender = 'M'
+    if y == 6:
+        gender = 'F'
+    if y == 7:
+        gender = 'PL'
+    
     flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL', 'ēn': '3PL'}
     attribute = False
     for flexia in flexias:
@@ -236,44 +260,33 @@ def isitperftnse(word, stem, y):                                    #функц�
                 if y == 7:
                     attribute = 'PRF.PL-'+flexias[flexia]
             else:
-                if y == 6:
-                    attribute = 'PRF.F-'+flexias[flexia]
-                if y == 5:
-                    attribute = 'PRF.M-'+flexias[flexia]
+                attribute = 'PRF.'+gender+'-'+flexias[flexia]
         if word == stem+'at'+flexia or word == stem+'it'+flexia:
             if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
                 if y == 7:
                     attribute = 'PST.PRF.PL-'+flexias[flexia]
             else:
-                if y == 6:
-                    attribute = 'PST.PRF.F-'+flexias[flexia]
-                if y == 5:
-                    attribute = 'PST.PRF.M-'+flexias[flexia]
+                attribute = 'PST.PRF.'+gender+'-'+flexias[flexia]
     if attribute == False:
         if word == stem+'ak':
-            if y == 5:
-                attribute = 'PRF.PTCP.M'
-            if y == 6:
-                attribute = 'PRF.PTCP.F'
-            if y == 7:
-                attribute = 'PRF.PTCP.PL'
+            attribute = 'PRF.PTCP.'+gender
         if word == stem+'in':
-            if y == 5:
-                attribute = 'ADJ.PTCP.M'
-            if y == 6:
-                attribute = 'ADJ.PTCP.F'
-            if y == 7:
-                attribute = 'ADJ.PTCP.PL'
+            attribute = 'ADJ.PTCP.'+gender
     return attribute
 
-def isitinfinite(word, stem, y):                                       #функция проверяет, не является ли слово глагольной формой, образованной от infinite (для formdefinition)
+def isitinfinite(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от infinite (для formdefinition)
+    if y == 8:
+        gender = 'M'
+    if y == 9:
+        gender = 'F'
+    
     attribute = False
     if word == stem+'ow':
-        attribute = 'INF-INF2'
+        attribute = 'INF2.'+gender
     elif word == stem:
-        attribute = 'INF'                                               #attribute — строка с глоссированием слова
+        attribute = 'INF.'+gender                                       #attribute — строка с глоссированием слова
     elif word == stem+'meǯ':
-        attribute = 'FUT.PTCP'
+        attribute = 'FUT.PTCP.'+gender
     return attribute
 
 def isitnegative(word, stem):                                       #функция проверяет, не является ли слово отрицательной или условной формой (для formdefinition)
@@ -313,7 +326,7 @@ def verbfind(text, vocab):                                          #основ�
         
         glossfoundsinword = []
         for x in range(len(vocab)):   #для каждой леммы:
-            for y in range(1, len(vocab[x])):   #для каждой основы:
+            for y in range(len(vocab[x])):   #для каждой основы:
                 if not nedostatochny_stem(vocab[x][y]):                 #так обозначаются отсутствующие (недостаточные) основы, которых нет в языке
 
                     for z in range(len(vocab[x][y])):                   #залезаем в словарь и смотрим, не содержит ли word одну из глагольных основ / форм из словаря vocab
@@ -321,7 +334,7 @@ def verbfind(text, vocab):                                          #основ�
                         if vocab[x][y][z] in wordnew:
                             attribute = formdefinition(wordnew, vocab[x][y][z], y)
                             if not attribute == False:                  #attribute — строка с глоссированием слова
-                                attribute = vocab[x][y][0]+' > '+attribute
+                                attribute = vocab[x][0][0]+' > '+attribute
                                 glossfoundsinword.append(attribute)     #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
             if word.endswith('m') or word.endswith('n') or word.endswith('t'):
                 if not nedostatochny_stem(vocab[x][0]):
