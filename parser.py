@@ -1,3 +1,9 @@
+'''
+Привет!
+Функции идут в более-менее хронологическом / логическом порядке. По большому счёту вся программа состоит из вложенных друг в друга функций.
+Дополнительные, более мелкие функции технического характера описываются в конце.
+'''
+
 def everythingalright():                                            #функция определяет, все ли необходимые для работы программы файлы лежат в директории
     alright = False
     import os
@@ -6,10 +12,10 @@ def everythingalright():                                            #функц�
     return alright
 
 def orthoconv(text):                                                #функция конвертирует орфографию
-    if not orthochecker(text) == True:
-        print('''In your text we have found symbols that shouldn't appear in one txt. These are: ''')
-        print('     /'+orthochecker(text))
-        print('''Either our parser doesn't support your writing system or your text is corrupted. Please keep in mind that the results of parsing can thus be unsatisfying.''')
+    #if not orthochecker(text) == True:
+        #print('''In your text we have found symbols that shouldn't appear in one txt. These are: ''')
+        #print('     /'+orthochecker(text))
+        #print('''Either our parser doesn't support your writing system or your text is corrupted. Please keep in mind that the results of parsing can thus be unsatisfying.''')
     
     with open('ortho.txt', 'r', encoding='utf-8') as file:
         ortho = file.readlines()
@@ -70,40 +76,6 @@ def textreading(orthoneed):                                         #функц�
     print('     /Text read.')
     #print(text)
     return text
-
-def deleteidentical(spisok):                                        #функция удаляет одинаковые элементы списка
-    n = []
-    for element in spisok:
-        
-        if '.M' in element:
-            if element.replace('.M', '.F') in spisok:
-                n.append(element.replace('.M', ''))
-        elif '.F' in element:
-            if element.replace('.F', '') in n:
-                n.append(element.replace('.F', ''))
-        elif '.PL' in element:
-            if element.replace('.PL', '') in n:
-                n.append(element.replace('.PL', ''))
-        else:
-            n.append(element)                                           #здесь проверяется, есть ли в списке элементы, которые отличаются только родом или числом, и удаляет их — это рудименты одинаковых основ глагола. Это нужно для элегантности выходных данных
-        
-    q = []
-    for element in n:
-        if element not in q:
-            q.append(element)
-    return q
-
-def slash_n_delete(stroka):                                         #функция удаляет \n из концов строк в словаре глаголов (для systembuilding)
-    if stroka.endswith('\n'):
-        stroka = stroka[0:len(stroka)-1]
-    return stroka
-
-def listen(stroka):                                                 #функция делает из строки список с этой строкой из вариантов основы (для systembuilding)
-    if '/' in stroka:
-        spisok = stroka.split('/')
-    else:
-        spisok = [stroka]
-    return(spisok)
 
 def derivation(vocab):                                              #коммутатор, выявляющий, какую форму нужно образовать, и перенаправляющий к нужной функции (для systembuilding)
     voiced = ('b', 'v', 'g', 'd', 'ð', 'ž', 'z', 'ʒ', 'ʁ', 'ǯ', 'ұ')
@@ -184,60 +156,101 @@ def systembuilding():                                               #основ�
     #print('     /Vocabulary loaded.')
     return vocab
 
-def spacedivision(text):                                            #функция находит пробелы в тексте и таким образом вычленяет слова (для verbdivision)
-    iwords = []
-    iword = -1
-    while text.find(' ', iword+1, len(text)-1) > -1:
-        iword = text.find(' ', iword+1, len(text)-1) + 1
-        iwords.append(iword)                                            #iwords собирает номера тех символов текста, которые являются пробелами
-    iwords.append(len(text))                                            #это нужно, чтобы при вычленении слов последнее слово включалось в список
-    return iwords
-
-def jification(stem):                                               #добавляет -j- в конец основы, если она оканчивается на гласный
-    vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
-    for vowel in vowels:
-        if stem.endswith(vowel):
-            stem = stem+'j'
-            break
-    return stem
-
-def wordclean(word):                                                #очищает слово от лишних знаков
-    
-    verbendings = ('um', 'jum', 'i', 'ji', 'd', 't', 'ām', 'jām', 'et', 'jet', 'en', 'jen', 'īǯ', 'jīǯ', 'meǯ', 'ak', 'jak', 'in', 'jin', 'ow', 'jow')
-    if '-' in word or '=' in word:
-        clitic = min(word.rfind('-'), word.rfind('='))
-        ending = word[clitic+1:len(word)]
-        if not ending in verbendings:
-            word = word[0:word.rfind('-')]                              #если конец слова отделяется дефисом или «равно» и не известен как личное окончание, то это может быть клитика, которую надо удалить
-    
-    word = word.replace('-', '')
-    word = word.replace('=', '')
-    word = word.replace(' ', '')
-    word = word.replace('.', '')
-    return word
-
 def isitpraestem(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от praestem (для formdefinition)
     if y == praesmasc:
         gender = 'M'
     if y == praesfemn:
         gender = 'F'
     attribute = False
+    stem = jification(stem)
     
     if word.endswith('d') or word.endswith('t'):
         flexias = ('d', 't')
         for flexia in flexias:
             if word == stem+flexia:
-                attribute = 'PRS.'+gender+'-'+'3SG'                     #attribute — строка с глоссированием слова
+                attribute = 'PRS.'+gender+'-'+'3SG'
     
     if attribute == False:
-        stem = jification(stem)
         flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
         for flexia in flexias:
             if word == stem+flexia:
-                attribute = 'PRS.'+gender+'-'+flexias[flexia]           #attribute — строка с глоссированием слова
+                attribute = 'PRS.'+gender+'-'+flexias[flexia]
     if attribute == False:
         if word == stem+'īǯ':
             attribute = 'AGENT_NOUN'
+    return attribute
+
+def isitpraes3sg(word, stem):                                       #функция проверяет, не является ли слово глагольной формой praes3sg (для formdefinition)
+    attribute = False
+    if word == stem:
+        attribute = 'PRS.3SG'
+    return attribute
+
+def isitpasttnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от pastmasc / pastfepl (для formdefinition)
+    attribute = False
+    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+    stem = jification(stem)
+    
+    for flexia in flexias:
+        if word.endswith(stem+flexia):
+            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
+                if y == 4:
+                    attribute = 'PST.PL-'+flexias[flexia]
+                if y == pastmasc:
+                    attribute = 'PST.SG-'+flexias[flexia]
+            else:
+                if y == pastfepl:
+                    attribute = 'PST.F-'+flexias[flexia]
+                if y == pastmasc:
+                    attribute = 'PST.M-'+flexias[flexia]
+    return attribute
+
+def isitperftnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от perfmasc / perffemn / perfplur (для formdefinition)
+    if y == perfmasc:
+        gender = 'M'
+    if y == perffemn:
+        gender = 'F'
+    if y == perfplur:
+        gender = 'PL'
+    stem = jification(stem)
+    
+    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+    attribute = False
+    for flexia in flexias:
+        if word == stem+flexia:
+            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
+                if y == perfplur:
+                    attribute = 'PRF.PL-'+flexias[flexia]
+            else:
+                if y == perfmasc or y == perffemn:
+                    attribute = 'PRF.'+gender+'-'+flexias[flexia]       #перфект
+        if word == stem+'at'+flexia or word == stem+'it'+flexia:
+            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
+                if y == perfplur:
+                    attribute = 'PST.PRF.PL-'+flexias[flexia]
+            else:
+                if y == perfmasc or y == perffemn:
+                    attribute = 'PST.PRF.'+gender+'-'+flexias[flexia]   #плюсквамперфект
+    if attribute == False:
+        if word == stem+'ak':
+            attribute = 'PRF.PTCP.'+gender                              #перфектное причастие
+        if word == stem+'in':
+            attribute = 'ADJ.PTCP.'+gender                              #причастие
+    return attribute
+
+def isitinfinite(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от infinite (для formdefinition)
+    if y == infimasc:
+        gender = 'M'
+    if y == infifemn:
+        gender = 'F'
+    
+    attribute = False
+    if word == jification(stem)+'ow':
+        attribute = 'INF2.'+gender
+    elif word == jification(stem):
+        attribute = 'INF.'+gender
+    elif word == stem+'meǯ':
+        attribute = 'FUT.PTCP.'+gender
     return attribute
 
 def isitcontract(word, praesstems):                                 #функция проверяет, не является ли слово стяжённой формой praesstem (для verbfind)
@@ -271,86 +284,14 @@ def isitcontract(word, praesstems):                                 #функц�
                 if word == stem+'en':
                     attribute = 'PRS.3PL'                               #стяжённая форма 3 лица мн. ч.
         if not attribute == False:
-            attribute = isitnegative(word, stem)+attribute
             attributes.append(attribute)                                #возвращается attributes — список attribute
     return attributes
 
-def isitpraes3sg(word, stem):                                       #функция проверяет, не является ли слово глагольной формой praes3sg (для formdefinition)
-    attribute = False
-    if word == stem:
-        attribute = 'PRS.3SG'                                           #attribute — строка с глоссированием слова
-    return attribute
-
-def isitpasttnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от pastmasc / pastfepl (для formdefinition)
-    attribute = False
-    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
-    for flexia in flexias:
-        if word.endswith(stem+flexia):
-            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
-                if y == 4:
-                    attribute = 'PST.PL-'+flexias[flexia]
-                if y == pastmasc:
-                    attribute = 'PST.SG-'+flexias[flexia]
-            else:
-                if y == pastfepl:
-                    attribute = 'PST.F-'+flexias[flexia]
-                if y == pastmasc:
-                    attribute = 'PST.M-'+flexias[flexia]                #attribute — строка с глоссированием слова
-    return attribute
-
-def isitperftnse(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от perfmasc / perffemn / perfplur (для formdefinition)
-    if y == perfmasc:
-        gender = 'M'
-    if y == perffemn:
-        gender = 'F'
-    if y == perfplur:
-        gender = 'PL'
-    
-    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
-    attribute = False
-    for flexia in flexias:
-        if word == stem+flexia:
-            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
-                if y == perfplur:
-                    attribute = 'PRF.PL-'+flexias[flexia]
-            else:
-                if y == perfmasc or y == perffemn:
-                    attribute = 'PRF.'+gender+'-'+flexias[flexia]       #перфект
-        if word == stem+'at'+flexia or word == stem+'it'+flexia:
-            if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
-                if y == perfplur:
-                    attribute = 'PST.PRF.PL-'+flexias[flexia]
-            else:
-                if y == perfmasc or y == perffemn:
-                    attribute = 'PST.PRF.'+gender+'-'+flexias[flexia]   #давнопрошедшее время
-    if attribute == False:
-        if word == stem+'ak':
-            attribute = 'PRF.PTCP.'+gender                              #перфектное причастие
-        if word == stem+'in':
-            attribute = 'ADJ.PTCP.'+gender                              #причастие
-    return attribute
-
-def isitinfinite(word, stem, y):                                    #функция проверяет, не является ли слово глагольной формой, образованной от infinite (для formdefinition)
-    if y == infimasc:
-        gender = 'M'
-    if y == infifemn:
-        gender = 'F'
-    
-    attribute = False
-    if word == stem+'ow':
-        attribute = 'INF2.'+gender
-    elif word == stem:
-        attribute = 'INF.'+gender                                       #attribute — строка с глоссированием слова
-    elif word == stem+'meǯ':
-        attribute = 'FUT.PTCP.'+gender
-    return attribute
-
 def isitnegative(word, stem):                                       #функция проверяет, не является ли слово отрицательной или условной формой (для formdefinition)
     neg = ''
-    if word.startswith('na'+stem):
-        neg = 'NEG-'
-    elif word.startswith('mā'+stem):
-        neg = 'SUBJ-'
+    '''
+    ОТРИЦАТЕЛЬНЫЕ ФОРМЫ В РАЗРАБОТКЕ
+    '''
     return neg
 
 def formdefinition(word, stem, y):                                  #коммутатор, выявляющий, какая из основ найдена в слове, и перенаправляющий к нужной функции (для verbdivision)
@@ -364,8 +305,6 @@ def formdefinition(word, stem, y):                                  #комму�
         attribute = isitperftnse(word, stem, y)
     if y == infimasc or y == infifemn:
         attribute = isitinfinite(word, stem, y)
-    if not attribute == False:
-        attribute = isitnegative(word, stem)+attribute
     return attribute
 
 def nedostatochny_stem(stems):                                      #функция определяет, не является ли глагол недостаточным, то есть не имеющим некоторых форм — тогда на их месте стоит дефис
@@ -411,6 +350,7 @@ def verbfind(text, vocab):                                          #основ�
                             if not attribute == False:                  #attribute — строка с глоссированием слова
                                 attribute = vocab[x][praesmasc][0]+' > '+attribute
                                 glossfoundsinword.append(attribute)     #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
+            
             if word.endswith('m') or word.endswith('n') or word.endswith('t'):
                 if not nedostatochny_stem(vocab[x][0]):
                     wordnew = wordclean(word)
@@ -418,15 +358,17 @@ def verbfind(text, vocab):                                          #основ�
                         for attribute in isitcontract(wordnew, vocab[x][0]):
                             attribute = vocab[x][praesmasc][0]+' > '+attribute
                         glossfoundsinword.append(attribute)
+            
             if glossfoundsinword == []:
                 wordnew = wordclean(word)
                 attribute = irreg(wordnew, irregularwordlines)
                 if not attribute == '':
                     glossfoundsinword.append(attribute)                 #может, это нерегулярная форма?
+        
         if not glossfoundsinword == []:
             glossfoundsinword = deleteidentical(glossfoundsinword)      #удаляем все повторяющиеся глссирования
             glossboxes.append([word, iwords[a], iwords[a+1]-1, glossfoundsinword])
-    #print(glossboxes)                                                  #glossboxes собирает все глоссирования глаголов в тексте в список "боксов" (слово, номер первого символа, номер пробела после слова, глоссирование)
+    print(glossboxes)                                                   #glossboxes собирает все глоссирования глаголов в тексте в список "боксов" (слово, номер первого символа, номер пробела после слова, глоссирование)
     print('     /Verbs found.')
     return glossboxes
 
@@ -440,6 +382,77 @@ def output(text, glossboxes):                                       #функц�
         text = text[0:glossbox[2]+1]+allglossesline+text[glossbox[2]:len(text)]
     with open('output.txt', 'w', encoding='utf-8') as f:
         f.write(text)
+
+def interface():                                                    #функция обеспечивает взаимодействие с пользователем
+    vocab = systembuilding()
+    exit = False
+    print('> > > Hello! You are using Shugni language verb parser. Fill the file text.txt in the same directory with the text you want to parse. It is preferable to avoid using punctuation and mark each sentence with a new line. Type in HELP for documentation.')
+    while exit == False:
+        print('> > > Does your text need convertion of the orthography? Type A and press Enter if so, else just press Enter, and the program will run.')
+        orthoneed = input()
+        if orthoneed.upper() == 'A' or orthoneed.upper() == 'А':
+            orthoneed = True
+        else:
+            orthoneed = False
+        text = textreading(orthoneed)
+        glossboxes = verbfind(text, vocab)
+        output(text, glossboxes)
+        print('''> > > You can find your text parsed in the file output.txt. Type X and press Enter if you want to stop the program. Else, edit text.txt and press Enter to parse another text.
+''')
+        exit = input()
+        if exit.upper() == 'X' or exit.upper() == 'Х':
+            exit = True
+        else:
+            exit = False
+
+if everythingalright():
+    interface()
+else:
+    print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
+    exit = input()
+    
+    
+    
+    
+    
+    
+    
+def deleteidentical(spisok):                                        #функция удаляет одинаковые элементы списка
+
+    n = []
+    for element in spisok:
+        
+        if '.M' in element:
+            if element.replace('.M', '.F') in spisok:
+                n.append(element.replace('.M', ''))
+            else:
+                n.append(element)
+        elif '.F' in element:
+            if not element.replace('.F', '') in n:
+                n.append(element)
+        elif '.PL' in element:
+            if not element.replace('.PL', '') in n:
+                n.append(element)
+        else:
+            n.append(element)                                           #здесь проверяется, есть ли в списке элементы, которые отличаются только родом или числом, и удаляет их — это рудименты одинаковых основ глагола
+                                                                        #например, для большинства основ презенса нет вариантов мужского и женского родов; на этом этапе глоссирования PRS.M-2SG и PRS.F-2SG
+    q = []
+    for element in n:
+        if element not in q:
+            q.append(element)                                           #здесь проверяется, есть ли в списке одинаковые элементы
+    return q
+
+def slash_n_delete(stroka):                                         #функция удаляет \n из концов строк в словаре глаголов (для systembuilding)
+    if stroka.endswith('\n'):
+        stroka = stroka[0:len(stroka)-1]
+    return stroka
+
+def listen(stroka):                                                 #функция делает из строки список с этой строкой из вариантов основы (для systembuilding)
+    if '/' in stroka:
+        spisok = stroka.split('/')
+    else:
+        spisok = [stroka]
+    return(spisok)
 
 def setnumbers():
     global praesmasc
@@ -463,30 +476,36 @@ def setnumbers():
     infimasc = 8
     infifemn = 9
 
-def interface():                                                    #функция обеспечивает взаимодействие с пользователем
-    vocab = systembuilding()
-    exit = False
-    print('> > > Hello! You are using Shugni language verb parser. Fill the file text.txt in the same directory with the text you want to parse. It is preferable to avoid using punctuation and mark each sentence with a new line. Type in HELP for documentation.')
-    while exit == False:
-        print('> > > Does your text need convertion of the orthography? Type A and press Enter if so, else just press Enter, and the program will run.')
-        orthoneed = input()
-        if orthoneed.upper() == 'A' or orthoneed.upper() == 'А':
-            orthoneed = True
-        else:
-            orthoneed = False
-        text = textreading(orthoneed)
-        glossboxes = verbfind(text, vocab)
-        output(text, glossboxes)
-        print('''> > > You can find your text parsed in the file output.txt. Type X and press Enter if you want to stop the program. Else, edit text.txt to parse another text.
-''')
-        exit = input()
-        if exit.upper() == 'X' or exit.upper() == 'Х':
-            exit = True
-        else:
-            exit = False
+def spacedivision(text):                                            #функция находит пробелы в тексте и таким образом вычленяет слова (для verbdivision)
+    iwords = []
+    iword = -1
+    while text.find(' ', iword+1, len(text)-1) > -1:
+        iword = text.find(' ', iword+1, len(text)-1) + 1
+        iwords.append(iword)                                            #iwords собирает номера тех символов текста, которые являются пробелами
+    iwords.append(len(text))                                            #это нужно, чтобы при вычленении слов последнее слово включалось в список
+    return iwords
 
-if everythingalright():
-    interface()
-else:
-    print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
-    exit =  input()
+def jification(stem):                                               #добавляет -j- в конец основы, если она оканчивается на гласный
+    vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
+    for vowel in vowels:
+        if stem.endswith(vowel):
+            stem = stem+'j'
+            break
+    return stem
+
+def wordclean(word):                                                #очищает слово от лишних знаков
+
+    verbendings = ('um', 'jum', 'i', 'ji', 'd', 't', 'ām', 'jām', 'et', 'jet', 'en', 'jen', 'īǯ', 'jīǯ', 'meǯ', 'ak', 'jak', 'in', 'jin', 'ow', 'jow')
+    if '-' in word or '=' in word:
+        iclitic = max(word.rfind('-'), word.rfind('='))+1
+        clitic = word[iclitic:len(word)]
+        if not clitic in verbendings:
+            word = word[0:iclitic-1]
+        
+        #если конец слова отделяется дефисом или «равно» и не известен как личное окончание, то это может быть клитика, которую надо удалить
+    
+    word = word.replace('-', '')
+    word = word.replace('=', '')
+    word = word.replace(' ', '')
+    word = word.replace('.', '')
+    return word
