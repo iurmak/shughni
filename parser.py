@@ -1,8 +1,106 @@
 '''
 Привет!
 Функции идут в более-менее хронологическом / логическом порядке. По большому счёту вся программа состоит из вложенных друг в друга функций.
-Дополнительные, более мелкие функции технического характера описываются в конце.
+Дополнительные, более мелкие функции технического характера описываются в самом начале, до сотой строки.
 '''
+
+def deleteidentical(spisok):                                        #функция удаляет одинаковые элементы списка
+
+    n = []
+    for element in spisok:
+        
+        if '.M' in element:
+            if element.replace('.M', '.F') in spisok:
+                n.append(element.replace('.M', ''))
+            else:
+                n.append(element)
+        elif '.F' in element:
+            if not element.replace('.F', '') in n:
+                n.append(element)
+        elif '.PL' in element:
+            if not element.replace('.PL', '') in n:
+                n.append(element)
+        else:
+            n.append(element)                                           #здесь проверяется, есть ли в списке элементы, которые отличаются только родом или числом, и удаляет их — это рудименты одинаковых основ глагола
+                                                                        #например, для большинства основ презенса нет вариантов мужского и женского родов; на этом этапе глоссирования PRS.M-2SG и PRS.F-2SG
+    q = []
+    for element in n:
+        if element not in q:
+            q.append(element)                                           #здесь проверяется, есть ли в списке одинаковые элементы
+    return q
+
+def slash_n_delete(stroka):                                         #функция удаляет \n из концов строк в словаре глаголов (для systembuilding)
+    if stroka.endswith('\n'):
+        stroka = stroka[0:len(stroka)-1]
+    return stroka
+
+def listen(stroka):                                                 #функция делает из строки список с этой строкой из вариантов основы (для systembuilding)
+    if '/' in stroka:
+        spisok = stroka.split('/')
+    else:
+        spisok = [stroka]
+    return(spisok)
+
+def setnumbers():
+    global praesmasc
+    global praesfemn
+    global praes3sg
+    global pastmasc
+    global pastfepl
+    global perfmasc
+    global perffemn
+    global perfplur
+    global infimasc
+    global infifemn
+    praesmasc = 0
+    praesfemn = 1
+    praes3sg = 2
+    pastmasc = 3
+    pastfepl = 4
+    perfmasc = 5
+    perffemn = 6
+    perfplur = 7
+    infimasc = 8
+    infifemn = 9
+
+def spacedivision(text):                                            #функция находит пробелы в тексте и таким образом вычленяет слова (для verbdivision)
+    iwords = []
+    iword = -1
+    while text.find(' ', iword+1, len(text)-1) > -1:
+        iword = text.find(' ', iword+1, len(text)-1) + 1
+        iwords.append(iword)                                            #iwords собирает номера тех символов текста, которые являются пробелами
+    iwords.append(len(text))                                            #это нужно, чтобы при вычленении слов последнее слово включалось в список
+    return iwords
+
+def jification(stem):                                               #добавляет -j- в конец основы, если она оканчивается на гласный
+    vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
+    for vowel in vowels:
+        if stem.endswith(vowel):
+            stem = stem+'j'
+            break
+    return stem
+
+def wordclean(word):                                                #очищает слово от лишних знаков
+
+    verbendings = ('um', 'jum', 'i', 'ji', 'd', 't', 'ām', 'jām', 'et', 'jet', 'en', 'jen', 'īǯ', 'jīǯ', 'meǯ', 'ak', 'jak', 'in', 'jin', 'ow', 'jow')
+    if '-' in word or '=' in word:
+        iclitic = max(word.rfind('-'), word.rfind('='))+1
+        clitic = word[iclitic:len(word)]
+        if not clitic in verbendings:
+            word = word[0:iclitic-1]
+        
+        #если конец слова отделяется дефисом или «равно» и не известен как личное окончание, то это может быть клитика, которую надо удалить
+    
+    word = word.replace('-', '')
+    word = word.replace('=', '')
+    word = word.replace(' ', '')
+    word = word.replace('.', '')
+    return word
+
+
+
+
+
 
 def everythingalright():                                            #функция определяет, все ли необходимые для работы программы файлы лежат в директории
     alright = False
@@ -410,102 +508,18 @@ if everythingalright():
 else:
     print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
     exit = input()
-    
-    
-    
-    
-    
-    
-    
-def deleteidentical(spisok):                                        #функция удаляет одинаковые элементы списка
 
-    n = []
-    for element in spisok:
-        
-        if '.M' in element:
-            if element.replace('.M', '.F') in spisok:
-                n.append(element.replace('.M', ''))
-            else:
-                n.append(element)
-        elif '.F' in element:
-            if not element.replace('.F', '') in n:
-                n.append(element)
-        elif '.PL' in element:
-            if not element.replace('.PL', '') in n:
-                n.append(element)
-        else:
-            n.append(element)                                           #здесь проверяется, есть ли в списке элементы, которые отличаются только родом или числом, и удаляет их — это рудименты одинаковых основ глагола
-                                                                        #например, для большинства основ презенса нет вариантов мужского и женского родов; на этом этапе глоссирования PRS.M-2SG и PRS.F-2SG
-    q = []
-    for element in n:
-        if element not in q:
-            q.append(element)                                           #здесь проверяется, есть ли в списке одинаковые элементы
-    return q
 
-def slash_n_delete(stroka):                                         #функция удаляет \n из концов строк в словаре глаголов (для systembuilding)
-    if stroka.endswith('\n'):
-        stroka = stroka[0:len(stroka)-1]
-    return stroka
 
-def listen(stroka):                                                 #функция делает из строки список с этой строкой из вариантов основы (для systembuilding)
-    if '/' in stroka:
-        spisok = stroka.split('/')
-    else:
-        spisok = [stroka]
-    return(spisok)
+'''
+TO DO LIST
+* negative forms
+* недостаточные основы
 
-def setnumbers():
-    global praesmasc
-    global praesfemn
-    global praes3sg
-    global pastmasc
-    global pastfepl
-    global perfmasc
-    global perffemn
-    global perfplur
-    global infimasc
-    global infifemn
-    praesmasc = 0
-    praesfemn = 1
-    praes3sg = 2
-    pastmasc = 3
-    pastfepl = 4
-    perfmasc = 5
-    perffemn = 6
-    perfplur = 7
-    infimasc = 8
-    infifemn = 9
+* spaces in the output.txt
+* universal dependencies (???)
+* interface
+* help and readme
+* updates downloader
 
-def spacedivision(text):                                            #функция находит пробелы в тексте и таким образом вычленяет слова (для verbdivision)
-    iwords = []
-    iword = -1
-    while text.find(' ', iword+1, len(text)-1) > -1:
-        iword = text.find(' ', iword+1, len(text)-1) + 1
-        iwords.append(iword)                                            #iwords собирает номера тех символов текста, которые являются пробелами
-    iwords.append(len(text))                                            #это нужно, чтобы при вычленении слов последнее слово включалось в список
-    return iwords
-
-def jification(stem):                                               #добавляет -j- в конец основы, если она оканчивается на гласный
-    vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
-    for vowel in vowels:
-        if stem.endswith(vowel):
-            stem = stem+'j'
-            break
-    return stem
-
-def wordclean(word):                                                #очищает слово от лишних знаков
-
-    verbendings = ('um', 'jum', 'i', 'ji', 'd', 't', 'ām', 'jām', 'et', 'jet', 'en', 'jen', 'īǯ', 'jīǯ', 'meǯ', 'ak', 'jak', 'in', 'jin', 'ow', 'jow')
-    if '-' in word or '=' in word:
-        iclitic = max(word.rfind('-'), word.rfind('='))+1
-        clitic = word[iclitic:len(word)]
-        if not clitic in verbendings:
-            word = word[0:iclitic-1]
-        
-        #если конец слова отделяется дефисом или «равно» и не известен как личное окончание, то это может быть клитика, которую надо удалить
-    
-    word = word.replace('-', '')
-    word = word.replace('=', '')
-    word = word.replace(' ', '')
-    word = word.replace('.', '')
-    return word
+'''
