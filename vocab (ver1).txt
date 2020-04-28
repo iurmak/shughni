@@ -148,7 +148,7 @@ zi	0	zed	zod	0	1	zɛc	zoðǯ	zɛd	0
 zibakc	0	0	zibakct	0	zibakcč	0	0	zibakct	0
 ziban	0	zibīnt	zibud	zibad	zibuvǯ/zibūjǯ	zibic	0	zibid	0
 zibɛt	0	0	zibɛtt/zibɛt	0	zibɛtč	0	0	zibɛt	0
-ziwɛð	0	ziweðd	ziwost	0	ziwosč	0	0	ziwɛst	0
+ziwɛð/ziweð	0	ziweðd	ziwost	0	ziwosč	0	0	ziwɛst	0
 zigaren	0	0	zigarent	0	zigarenč	0	0	zigarent	0
 zigɛr	0	0	zigɛrt	0	zigɛrč	0	0	zigɛrt	0
 zidarð	0	zidorðd	ziduӿt	zidaӿt	ziduӿč	zidiӿc	zidaӿč	zidiӿt	0
@@ -376,7 +376,7 @@ tew	0	0	tewd/tewt	0	tewǯ/tewč	0	0	tewd/tewt	0
 tɛb	0	0	tɛpt/tɛbt	0	tɛpč	0	0	tɛpt	0
 tɛz	0	0	tɛzd	0	tɛzǯ	0	0	tɛzd	0
 tɛӿ	0	0	tɛӿt	0	tɛӿč	0	0	tɛӿt	0
-tiī	0	tīzd	tūǯd	toǯd	tūǯč	tīc	toǯč	tīd	0
+ti	0	tīzd	tūjd	tojd	tūjǯ	tīc	tojǯ	tīd	0
 tigriz	0	tidakt	tigrizd	0	tidikč/tidakč	0	0	tidikt/tidakt	0
 tudarð	0	tidīrðd	tiduӿt	0	tiduӿč	0	0	tidiӿt	0
 tikriz/tigriz	0	0	tikrizd/tigrizd	0	tikrizǯ/tigrizǯ	0	0	tikrizd/tigrizd	0
@@ -592,7 +592,6 @@ qörš/qurš	0	0	qöršt/quršt	0	qöršč/quršt	0	0	qöršt/quršt	0
 ǯirɛw	0	0	ǯirɛwd/ǯirɛwg	0	ǯirɛwč	0	0	ǯirɛwd	0
 ǯīʁ	0	0	ǯīʁd	0	ǯīgǯ	0	0	ǯīrd	0
 ǯuk/čuk	0	0	ǯukt/čukt	0	ǯukč/čukč	0	0	ǯukt/čukt	0
-ǯumb	0	0	ǯumt/ǯumbt	0	ǯumč/ǯumbǯ	0	0	ǯumt/ǯumbt	0
 ǯumben/ǯunben	0	0	ǯumbent/ǯunbent	0	ǯumbenč/ǯunbenč	0	0	ǯumbent/ǯunbent	0
 ǯuk/čuk	0	0	ǯukt/čukt	0	ǯukč/čukč	0	0	ǯukt/čukt	0
 ǯumb	0		ǯumt/ǯumbt	0	ǯumč/ǯumbǯ	0	0	ǯumt/ǯumbt	0
