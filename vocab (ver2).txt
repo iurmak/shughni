@@ -521,7 +521,7 @@ cöv	0	0	cövd	0	cövǯ	0	0	cövd	0
 čiraq	0	0	čiraqt	0	čiraqč	0	0	čirakt	0
 čiriq	0	0	čiriqt	0	čiriqč	0	0	čiriqt	0
 čirīq	0	0	čirīqt	0	čirīqč	0	0	čirīkt	0
-čis	0	čost	čuct	0	čueč	0	0	čiχto»'	0
+čis	0	čost	čuct	0	čueč	0	0	čiχto	0
 čiʁ	0	0	čiʁd	0	čigǯ	0	0	čiʁd	0
 čiq	0	0	čiqt	0	čiqč	0	0	čiqt	0
 čiǯuk	0	0	čiǯukt	0	čiǯukč	0	0	čiǯukt	0
