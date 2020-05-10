@@ -52,6 +52,7 @@ def setnumbers():
     global perfplur
     global infimasc
     global infifemn
+    global lexeme
     praesmasc = 0
     praesfemn = 1
     praes3sg = 2
@@ -62,6 +63,10 @@ def setnumbers():
     perfplur = 7
     infimasc = 8
     infifemn = 9
+    lexeme = 10
+    
+    global contracted
+    contracted = -1
 
 def spacedivision(text):                                            #функция находит пробелы в тексте и таким образом вычленяет слова (для verbdivision)
     iwords = []
@@ -91,10 +96,22 @@ def wordclean(word):                                                #очища�
         
         #если конец слова отделяется дефисом или «равно» и не известен как личное окончание, то это может быть клитика, которую надо удалить
     
-    word = word.replace('-', '')
-    word = word.replace('=', '')
-    word = word.replace(' ', '')
-    word = word.replace('.', '')
+    while '-' in word:
+        word = word.replace('-', '')
+    while '—' in word:
+        word = word.replace('—', '')
+    while '=' in word:
+        word = word.replace('=', '')
+    while ' ' in word:
+        word = word.replace(' ', '')
+    while '.' in word:
+        word = word.replace('.', '')
+    while ',' in word:
+        word = word.replace(',', '')
+    while '?' in word:
+        word = word.replace('?', '')
+    while '!' in word:
+        word = word.replace('!', '')
     return word
 
 
@@ -155,20 +172,23 @@ def orthochecker(text):                                             #функц�
 def textreading(orthoneed):                                         #функция читает текст из файла text и чистит его
     with open('text.txt', 'r', encoding='utf-8') as file:
         text = file.read()
-    text = text.lower()                                                 #всё переводим в строчные
     if orthoneed:
         text = orthoconv(text)                                          #конвертируем орфографию (если нужно)
+    
     i = 0
     while i >= 0:
         i = text.find('\n', i, len(text))
         if i >= 0:
             text = text[0:i]+' \n '+text[i+1:len(text)]
             i = i+2                                                     #добавляем пробелы до и после \n — это нужно для корректного деления на слова
+    
     while text[0] == '\n':
         text = text[1:len(text)]
+    
     while '\t' in text:
         text = text.replace('\t', ' ')
     text = ' '+text+' '
+    
     while '  ' in text:
         text = text.replace('  ', ' ')                                  #убираем табуляции и лишние пробелы
     print('     /Text read.')
@@ -234,8 +254,6 @@ def systembuilding():                                               #основ�
         for line in file:
             if not line.startswith('#'):
                 vocab.append(line)                                      #читаем файл vocab, в котором лежит список глагольных основ
-    #for stroka in vocab:
-        #stroka = orthoconv(stroka.lower())                             #конвертируем орфографию (ПОКА ЧТО НЕТ, ВСЁ МОЖЕТ ПОЕХАТЬ)
     
     for i in range(len(vocab)):
         vocab[i] = vocab[i].split('\t')
@@ -351,59 +369,77 @@ def isitinfinite(word, stem, y):                                    #функц�
         attribute = 'FUT.PTCP.'+gender
     return attribute
 
-def isitcontract(word, praesstems):                                 #функция проверяет, не является ли слово стяжённой формой praesstem (для verbfind)
+def isitcontract(word, stem):                                   #функция проверяет, не является ли слово стяжённой формой praesstem (для verbfind)
     attributes = []
     vowels = ('a', 'e', 'i', 'o', 'u', 'ā', 'ī', 'ō', 'ū', 'ɛ', 'ö')
-    for stem in praesstems:
-        attribute = False
-        ivowel = len(stem)-1
-        for a in range(1,len(stem)):
-            if stem[a] in vowels:
-                ivowel = a                                              #определяется местоположение ближайшего к концу слова гласного
-
-        ivowel = len(stem)-ivowel
-        if word.endswith('m'):
-            if ivowel <3:
-                if stem[len(stem)-ivowel] == 'a':
-                    stem = stem[0:len(stem)-ivowel]+'ā'
-                elif stem[len(stem)-ivowel] == 'i':
-                    stem = stem[0:len(stem)-ivowel]+'ī'
-                elif stem[len(stem)-ivowel] == 'o':
-                    stem = stem[0:len(stem)-ivowel]+'ō'
-                elif stem[len(stem)-ivowel] == 'u':
-                    stem = stem[0:len(stem)-ivowel]+'ū'
-                if word == stem+'m':
-                    attribute = 'PRS.1SG'                               #стяжённая форма 1 лица ед. ч.
-        elif word.endswith('en') or word.endswith('et'):
-            if ivowel <3:
-                stem = stem[0:len(stem)-ivowel]
-                if word == stem+'et':
-                    attribute = 'PRS.2PL'                               #стяжённая форма 2 лица мн. ч.
-                if word == stem+'en':
-                    attribute = 'PRS.3PL'                               #стяжённая форма 3 лица мн. ч.
-        if not attribute == False:
-            attributes.append(attribute)                                #возвращается attributes — список attribute
-    return attributes
-
-def isitnegative(word, stem):                                       #функция проверяет, не является ли слово отрицательной или условной формой (для formdefinition)
-    neg = ''
-    '''
-    ОТРИЦАТЕЛЬНЫЕ ФОРМЫ В РАЗРАБОТКЕ
-    '''
-    return neg
+    attribute = False
+    ivowel = len(stem)-1
+    for a in range(1,len(stem)):
+        if stem[a] in vowels:
+            ivowel = a                                              #определяется местоположение ближайшего к концу слова гласного
+    
+    ivowel = len(stem)-ivowel
+    if word.endswith('m'):
+        if ivowel <3:
+            if stem[len(stem)-ivowel] == 'a':
+                stem = stem[0:len(stem)-ivowel]+'ā'
+            elif stem[len(stem)-ivowel] == 'i':
+                stem = stem[0:len(stem)-ivowel]+'ī'
+            elif stem[len(stem)-ivowel] == 'o':
+                stem = stem[0:len(stem)-ivowel]+'ō'
+            elif stem[len(stem)-ivowel] == 'u':
+                stem = stem[0:len(stem)-ivowel]+'ū'
+            if word == stem+'m':
+                attribute = 'PRS.1SG'                               #стяжённая форма 1 лица ед. ч.
+    elif word.endswith('en') or word.endswith('et'):
+        if ivowel <3:
+            stem = stem[0:len(stem)-ivowel]
+            if word == stem+'et':
+                attribute = 'PRS.2PL'                               #стяжённая форма 2 лица мн. ч.
+            if word == stem+'en':
+                attribute = 'PRS.3PL'                               #стяжённая форма 3 лица мн. ч.
+    return attribute
 
 def formdefinition(word, stem, y):                                  #коммутатор, выявляющий, какая из основ найдена в слове, и перенаправляющий к нужной функции (для verbdivision)
-    if y == praesmasc or y == praesfemn:
-        attribute = isitpraestem(word, stem, y)
-    if y == praes3sg:
-        attribute = isitpraes3sg(word, stem)
-    if y == pastmasc or y == pastfepl:
-        attribute = isitpasttnse(word, stem, y)
-    if y == perfmasc or y == perffemn or y == perfplur:
-        attribute = isitperftnse(word, stem, y)
-    if y == infimasc or y == infifemn:
-        attribute = isitinfinite(word, stem, y)
-    return attribute
+    attributes = []                                                     #attributes — список глоссирований, который является результатом работы formdefinition
+    
+    #проверяем на обычные формы
+    
+    if word.startswith(stem):
+        if y == praesmasc or y == praesfemn:
+            attributes.append(isitpraestem(word, stem, y))
+        elif y == praes3sg:
+            attributes.append(isitpraes3sg(word, stem))
+        elif y == pastmasc or y == pastfepl:
+            attributes.append(isitpasttnse(word, stem, y))
+        elif y == perfmasc or y == perffemn or y == perfplur:
+            attributes.append(isitperftnse(word, stem, y))
+        elif y == infimasc or y == infifemn:
+            attributes.append(isitinfinite(word, stem, y))
+    
+    #проверяем на стяжённые формы
+    
+    if y == contracted:
+        attributes.append(isitcontract(word, stem))
+    
+    #проверяем на отрицательные формы
+    
+    if word.startswith('ma') or word.startswith('na'):
+        if not word[2:].startswith(stem):
+            y = contracted
+        if word[2:].startswith(stem) or word.endswith('m') or word.endswith('et') or word.endswith('en'):
+            neg_attributes = formdefinition(word[2:], stem, y)
+            for neg_attribute in neg_attributes:
+                if word.startswith('ma'):
+                    attributes.append('SUB-'+neg_attribute)
+                if word.startswith('na'):
+                    attributes.append('NEG-'+neg_attribute)
+    
+    for element in attributes:
+        if element == False:
+            attributes.pop(element)
+    
+    return attributes
 
 def nedostatochny_stem(stems):                                      #функция определяет, не является ли глагол недостаточным, то есть не имеющим некоторых форм — тогда на их месте стоит дефис
     nedost = False
@@ -432,7 +468,7 @@ def verbfind(text, vocab):                                          #основ�
     iwords = spacedivision(text)                                        #iwords — список номеров символов текста, с которых начинаются слова
     glossboxes = []
     for a in range(len(iwords)-1):
-        word = text[iwords[a]:iwords[a+1]]
+        word = text[iwords[a]:iwords[a+1]].lower()
         word = word.replace(' ', '')                                    #word — это слово, в отношении которого программа пытается понять, является ли оно глаголом
         #print(word)
         
@@ -440,22 +476,27 @@ def verbfind(text, vocab):                                          #основ�
         for x in range(len(vocab)):   #для каждой леммы:
             for y in range(len(vocab[x])):   #для каждой основы:
                 if not nedostatochny_stem(vocab[x][y]):                 #так обозначаются отсутствующие (недостаточные) основы, которых нет в языке
-
+                
                     for z in range(len(vocab[x][y])):                   #залезаем в словарь и смотрим, не содержит ли word одну из глагольных основ / форм из словаря vocab
                         wordnew = wordclean(word)
                         if vocab[x][y][z] in wordnew:
-                            attribute = formdefinition(wordnew, vocab[x][y][z], y)
-                            if not attribute == False:                  #attribute — строка с глоссированием слова
-                                attribute = vocab[x][praesmasc][0]+' > '+attribute
-                                glossfoundsinword.append(attribute)     #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
+                            attributes = formdefinition(wordnew, vocab[x][y][z], y)
+                            if not attributes == []:
+                                for attribute in attributes:
+                                    if vocab[x][lexeme][0] != '—':
+                                        attribute = vocab[x][lexeme][0]+' > '+attribute
+                                    glossfoundsinword.append(attribute) #glossfoundsinword собирает все данные по найденным свойствам глагола для одного word
             
-            if word.endswith('m') or word.endswith('n') or word.endswith('t'):
+            if word.endswith('m') or word.endswith('en') or word.endswith('et'):
                 if not nedostatochny_stem(vocab[x][0]):
                     wordnew = wordclean(word)
-                    if not isitcontract(wordnew, vocab[x][0]) == []:    #если слово оканчивается на m, t или n, возможно, это стяжённая форма презенса?
-                        for attribute in isitcontract(wordnew, vocab[x][0]):
-                            attribute = vocab[x][praesmasc][0]+' > '+attribute
-                        glossfoundsinword.append(attribute)
+                    for stem in vocab[x][0]:
+                        attributes = formdefinition(wordnew, stem, contracted)
+                        if not attributes == []:                        #если слово оканчивается на m, t или n, возможно, это стяжённая форма презенса?
+                            for attribute in attributes:
+                                if vocab[x][lexeme][0] != '—':
+                                    attribute = vocab[x][lexeme][0]+' > '+attribute
+                                glossfoundsinword.append(attribute)
             
             if glossfoundsinword == []:
                 wordnew = wordclean(word)
@@ -478,6 +519,15 @@ def output(text, glossboxes):                                       #функц�
             allglossesline = allglossesline+gloss+', '
         allglossesline = allglossesline[0:len(allglossesline)-2]+')'
         text = text[0:glossbox[2]+1]+allglossesline+text[glossbox[2]:len(text)]
+    
+    import re
+    while '\n ' in text:
+        text = re.sub('\n ', '\n', text)
+    while ' \n' in text:
+        text = re.sub(' \n', '\n', text)
+    
+    text = text[1:len(text)-1]
+    
     with open('output.txt', 'w', encoding='utf-8') as f:
         f.write(text)
 
@@ -509,17 +559,18 @@ else:
     print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
     exit = input()
 
-
-
 '''
 TO DO LIST
-* negative forms
+* неразличение долгот
 * недостаточные основы
 
-* spaces in the output.txt
-* universal dependencies (???)
 * interface
 * help and readme
 * updates downloader
+
+
+
+
+
 
 '''
