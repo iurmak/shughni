@@ -21,6 +21,6 @@ for cell_number in range(len(existing_database)):
             else:
                 updated_database[cell_number] = existing_database[cell_number] + '\t' + praes_stem_and_lexeme[candidate]
 
-with open('vocab_with_lexemes.txt','w',encoding='UTF-8') as f:
+with open('vocab_with_lexemes.tsv','w',encoding='UTF-8') as f:
     for string in updated_database:
         f.write(string+'\r\n')

@@ -14,7 +14,7 @@ def extract(gloss,place,source,sample): #extracts verb forms from the verb lists
 
 def main():
     format = {0:('Praes','PraesM'),1:'PraesF',2:'3SgPraes',3:('Past','PastM'),4:'PastF',5:('PerfM','Perf'),6:'PerfF',7:'PerfPl',8:('Inf','InfM'),9:('InfF')} #our way of keeping verb lemmas (their forms)
-    with open('verbs0.txt', encoding='utf-8') as f: #verbs0.txt is the txt where manually corrected verb entries are kept 
+    with open('verbs0.txt', encoding='utf-8') as f: #verbs0.txt is the txt where manually corrected verb entries are kept
         text = f.read()
     text = text.split('\n')
     res = []
@@ -66,7 +66,6 @@ def main():
                 if result[i][z+1] == '/':
                     result[i][z+1] = ''
                     result[i] = ''.join(result[i])
-                    print(result[i])
         result[i] = ''.join(result[i])
 
     with open('v_ordered.txt', 'w', encoding='utf-8') as f:
