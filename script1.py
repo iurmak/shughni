@@ -13,16 +13,16 @@ def extract(gloss,place,source,sample): #extracts verb forms from the verb lists
     return sample
 
 def main():
-    format = {0:('Praes','PraesM'),1:'PraesF',2:'3SgPraes',3:('Past','PastM'),4:'PastF',5:('PerfM','Perf'),6:'PerfF',7:'PerfPl',8:('Inf','InfM'),9:('InfF')} #our format of keeping lemmas/forms
-    with open('verbs0.txt', encoding='utf-8') as f:
+    format = {0:('Praes','PraesM'),1:'PraesF',2:'3SgPraes',3:('Past','PastM'),4:'PastF',5:('PerfM','Perf'),6:'PerfF',7:'PerfPl',8:('Inf','InfM'),9:('InfF')} #our way of keeping verb lemmas (their forms)
+    with open('verbs0.txt', encoding='utf-8') as f: #verbs0.txt is the txt where manually corrected verb entries are kept 
         text = f.read()
     text = text.split('\n')
     res = []
     result = []
     while '' in text:
-        text.remove('') # text — лист из словарных статей глаголов, где каждая статья — строка (пустые строки удалены)
+        text.remove('') #text is the list of the dictionary entries of verbs; each entry is a string; all the empty terms have been deleted
     for i in range(len(text)):
-        b = text[i].split() #b — конкретная СС, рассплитенная по пробелам
+        b = text[i].split() #b is the dictionary entry which was splitted by space
         sm = ['0','1','2','3','4','5','6','7','8','9']
         for pl, gl in format.items():
             if isinstance(gl,tuple):
