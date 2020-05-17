@@ -1,4 +1,0 @@
-jast	PRS.3SG
-nist	NEG.PRS.3SG
-būd	PST.3SG
-nabūd	NEG.PST.3SG
