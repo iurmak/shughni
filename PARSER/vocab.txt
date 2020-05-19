@@ -529,7 +529,6 @@ cöv	0	0	cövd	0	cövǯ	0	0	cövd	0	—
 čīq	0	0	čīqt	0	čīqč	0	0	čīqtou	0	—
 čoqön	0	0	čoqönt	0	čoqönč	0	0	čoqönt	0	—
 čup	0	0	čupt	0	čupč	0	0	čupt	0	stamp
-čup	0	0	čupt	0	čupč	0	0	čupt	0	—
 šānd	0	šunt	šīnt	0	šīnč	0	0	šīnt	0	—
 šɛp/šɛb	0	0	šɛpt/šɛbt/šɛbd	0	šɛpč/šɛbč/šɛbǯ	0	0	šɛpt/šɛbt/šɛbd	0	—
 šinɛb	0	0	šinɛbt/šinɛpt	0	šinɛbč/šinɛbič	0	0	šinɛbt/šinɛpt	0	—
