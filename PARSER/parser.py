@@ -684,6 +684,9 @@ def verbfind(text, vocab):
         #например, при первой итерации цикла для текста 'First second' word будет 'First '
         word = text[iwords[a]:iwords[a+1]]
         
+        #уберём в word возможные висящие сзади пробелы
+        word = re.sub(' ', '', word)
+        
         #очистим слово от мусора — пробелов и висящих в начале и конце знаках препинаний — и будем использовать его для определения формы
         wordnew = wordclean(word)
         
@@ -859,5 +862,5 @@ if everythingalright():
 else:
     print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
     exit = input()
- 
-#спасибо что дочитали :)
+
+#спасибо что дочитали ;)
