@@ -3,7 +3,7 @@
 Функции идут в более-менее хронологическом / логическом порядке. По большому счёту вся программа состоит из вложенных друг в друга функций.
 Дополнительные, более мелкие функции технического характера описываются в самом начале, до 180 строки.
 
-UPD: я так посмотрел и понял, что легче читать код «с конца». В конце происходит самое важное, каркас, потом можно пролистывать вверх и узнавать, что происходит в вызванных функциях.
+UPD: я так посмотрел и понял, что легче читать код «с конца», и по ходу движения искать в коде новые функции и узнавать, что они делают. В конце происходит самое важное, каркас, потом можно пролистывать вверх и узнавать, что происходит в вызванных функциях.
 Я бы расположил иначе, но Python не умеет вызывать функцию, которая ниже в коде, поэтому приходится сначала описывать функции, а потом их вызывать :/
 '''
 
@@ -81,6 +81,7 @@ def listen(stroka):
 def setnumbers():
     #функция устанавливает глобальные константы, индексы глагольных основ, чтобы было удобнее достигать нужной ячейки в матрице словаря
     #каждая константа — индексы грамматической формы в словаре (начиная с 0)
+    #теперь можно обращаться к стемам презенса не как vocab[i][0], а как vocab[i][praesmasc] — так интуитивнее, плюс всегда можно легко поменять нумерацию
     
     global praesmasc
     global praesfemn
@@ -192,10 +193,12 @@ def everythingalright():
 def orthoconv(text):
     #конвертируем орфографию
     
-    #if not orthochecker(text) == True:
-        #print('''In your text we have found symbols that shouldn't appear in one txt. These are: ''')
-        #print('     /'+orthochecker(text))
-        #print('''Either our parser doesn't support your writing system or your text is corrupted. Please keep in mind that the results of parsing can thus be unsatisfying.''')
+    '''
+    if not orthochecker(text) == True:
+        print('In your text we have found symbols that shouldn't appear in one txt. These are: ')
+        print('     /'+orthochecker(text))
+        print('Either our parser doesn't support your writing system or your text is corrupted. Please keep in mind that the results of parsing can thus be unsatisfying.')
+    '''
     
     with open('ortho.txt', 'r', encoding='utf-8') as file:
         ortho = file.readlines()
@@ -219,6 +222,7 @@ def orthochecker(text):
     #но пока что она в разработке :)
     
     orthoright = ''
+    
     '''
     with open('orthocorrupt.txt', 'r', encoding='utf-8') as file:
         ortho = file.readlines()
@@ -227,6 +231,7 @@ def orthochecker(text):
         if a in text and b in text:
             orthoright = orthoright+'{'+a+', '+b+'} '
     '''
+    
     if orthoright == '':
         orthoright = True
     return orthoright
@@ -257,7 +262,7 @@ def derivation(vocab):
     
     #нам понадобятся списки глухих и звонких согласных
     voiced = ('b', 'v', 'g', 'd', 'ð', 'ž', 'z', 'ʒ', 'ʁ', 'ǯ', 'ұ')
-    deaf = ('θ', 'k', 'p', 's', 't', 'f', 'χ', 'ӿ', 'c', 'č', 'š', 'q', '''l', 'r', 'm', 'n''')
+    deaf = ('θ', 'k', 'p', 's', 't', 'f', 'χ', 'ӿ', 'c', 'č', 'š', 'q')
     
     #теперь если значение какой-то ячейки матрицы словаря равно 1, то мы перенаправляем программу в нужную функцию
     for i in range(len(vocab)):
@@ -269,6 +274,8 @@ def derivation(vocab):
             vocab[i][5] = make_perfmasc(vocab[i][1], deaf)              #основа перфекта образуется из основы презенса
         if vocab[i][8][0] == '1':
             vocab[i][8] = vocab[i][3]                                   #основа инфинитива совпадает с основой претерита
+    
+    #возвращаем vocab — полный словарь с формами
     return(vocab)
 
 def make_praes3sg(praestem, deaf, voiced):
@@ -363,6 +370,9 @@ def systembuilding():
         for j in range(len(vocab[i])):
             if vocab[i][j][0] == '0':
                 vocab[i][j] = vocab[i][j-1]
+    
+    #теперь vocab — список (словарь) списков (лексем), состоящих из списков (разных форм), состоящих из списков (разных вариаций одной формы)
+    #у каждой формы есть свой индекс (например, 0 для стема презенса, 5 для женского стема перфекта, 10 для леммы, и т.д.)
     
     #print(vocab)
     print('     /Vocabulary loaded.')
@@ -780,7 +790,6 @@ def verbfind(text, vocab):
     return glossboxes
 
 def output(text, glossboxes):
-    
     #функция выводит текст с тегами глоссирований в файл output.txt
     
     #перевернём список «боксов», чтобы начинать вставлять глоссирования в текст с конца, а не с начала
