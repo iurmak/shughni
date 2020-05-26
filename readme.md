@@ -1,4 +1,4 @@
-<b><i>Привет! Здесь вы можете скачать <a href="https://ru.wikipedia.org/wiki/Лейпцигская_система_правил_глоссирования">таггер</a> глаголов для <a href="https://ru.wikipedia.org/wiki/Шугнанский_язык">шугнанского языка</a>.</b></i> Можно посмотреть презентацию <b><a href="https://docs.google.com/presentation/d/1nZXzRav2YxfR-s5FfIQ9GiQplBZwjopbtrUPEg3Q6ss/edit?usp=sharing">таггера</a></b> на Google Docs.
+<b><i>Привет! Здесь вы можете скачать <a href="https://ru.wikipedia.org/wiki/Лейпцигская_система_правил_глоссирования">таггер</a> глаголов для <a href="https://ru.wikipedia.org/wiki/Шугнанский_язык">шугнанского языка</a>. Можно посмотреть презентацию <a href="https://docs.google.com/presentation/d/1nZXzRav2YxfR-s5FfIQ9GiQplBZwjopbtrUPEg3Q6ss/edit?usp=sharing">таггера</a> на Google Docs.</i></b>
 
 <h3>ЧТО УМЕЕТ ДЕЛАТЬ ТАГГЕР</h3>
 
