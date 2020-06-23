@@ -13,7 +13,7 @@ def deleteidentical(spisok):
     #функция удаляет одинаковые элементы списка
     
     #сначала проверяется, есть ли в списке элементы, которые отличаются только родом или числом, и удаляет их — это рудименты одинаковых основ глагола
-    #например, для большинства основ презенса нет вариантов мужского и женского родов; на этом этапе глоссирования PRS.M-2SG и PRS.F-2SG превращаются в одно глоссирование PRS-2SG
+    #например, для большинства основ презенса нет вариантов мужского и женского родов; на этом этапе глоссирования PRS.M-2SG и PRS.F-2SG
     #все подходящие элементы попадают в список n
     n = []
     for element in spisok:
@@ -34,7 +34,6 @@ def deleteidentical(spisok):
     
     #здесь проверяется, есть ли в списке одинаковые элементы
     #все подходящие элементы попадают в список q, который выводится из функции
-    
     q = []
     for element in n:
         if element not in q:
@@ -112,7 +111,7 @@ def setnumbers():
     contracted = -1
 
 def spacedivision(text):
-    #функция находит пробелы в тексте и таким образом вычленяет токены (для verbdivision)
+    #функция находит пробелы в тексте и таким образом вычленяет токены (для verbdivision
     
     #iwords собирает номера тех символов текста, которые являются пробелами
     iwords = []
@@ -147,7 +146,7 @@ def wordclean(word):
     word = word.lower()
     
     #если конец токена отделяется дефисом или «равно» и не известен как личное окончание, то это может быть клитика, которую надо удалить
-    verbendings = ('um', 'jum', 'i', 'ji', 'd', 't', 'ām', 'jām', 'et', 'jet', 'en', 'jen', 'īǯ', 'jīǯ', 'meǯ', 'ak', 'jak', 'in', 'jin', 'ow', 'jow')
+    verbendings = ('um', 'jum', 'i', 'ji', 'd', 't', 'ām', 'jām', 'et', 'jet', 'en', 'jen', 'īǯ', 'jīǯ', 'meǯ', 'ak', 'jak', 'in', 'jin', 'ow', 'jow')
     if '-' in word or '=' in word:
         iclitic = max(word.rfind('-'), word.rfind('='))+1
         clitic = word[iclitic:len(word)]
@@ -164,6 +163,18 @@ def wordclean(word):
     word = re.sub('\?', '', word)
     word = re.sub('\!', '', word)
     word = re.sub('\:', '', word)
+    
+    return word
+
+def delong(word, delongneed):
+    #меняет все гласные на краткие
+    
+    short = {'ā': 'a', 'ɛ': 'e', 'ī': 'i', 'ō': 'o', 'ö': 'u'}
+    
+    if delongneed:
+        for symbol in short:
+            if symbol in word:
+                word = re.sub(symbol, short[symbol], word)
     
     return word
 
@@ -193,13 +204,6 @@ def everythingalright():
 
 def orthoconv(text):
     #конвертируем орфографию
-    
-    '''
-    if not orthochecker(text) == True:
-        print('In your text we have found symbols that shouldn't appear in one txt. These are: ')
-        print('     /'+orthochecker(text))
-        print('Either our parser doesn't support your writing system or your text is corrupted. Please keep in mind that the results of parsing can thus be unsatisfying.')
-    '''
     
     with open('ortho.txt', 'r', encoding='utf-8') as file:
         ortho = file.readlines()
@@ -358,7 +362,7 @@ def systembuilding():
         vocab[i] = vocab[i].split('\t')
         vocab[i][len(vocab[i])-1] = slash_n_delete(vocab[i][len(vocab[i])-1])
     
-    #реорганизуем vocab как список (словарь) списков (лексем), состоящих из списков (разных форм), состоящих из строк (разных вариаций одной формы)
+    #реорганизуем vocab как список (словарь) списков (лексем), состоящих из списков (разных форм), состоящих из списков (разных вариаций одной формы)
     for i in range(len(vocab)):
         for j in range(len(vocab[i])):
             vocab[i][j] = listen(vocab[i][j])
@@ -372,7 +376,7 @@ def systembuilding():
             if vocab[i][j][0] == '0':
                 vocab[i][j] = vocab[i][j-1]
     
-    #теперь vocab — список (словарь) списков (лексем), состоящих из списков (разных форм), состоящих из строк (разных вариаций одной формы)
+    #теперь vocab — список (словарь) списков (лексем), состоящих из списков (разных форм), состоящих из списков (разных вариаций одной формы)
     #у каждой формы есть свой индекс (например, 0 для стема презенса, 5 для женского стема перфекта, 10 для леммы, и т.д.)
     
     #print(vocab)
@@ -389,7 +393,7 @@ def isitpraestem(word, stem, y):
     if y == praesfemn:
         gender = 'F'
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
     
     #добавим к концу стема -j-, если он оканчивается на гласный
@@ -404,7 +408,7 @@ def isitpraestem(word, stem, y):
     
     #проверяем, не является ли слово одной из других форм презенса
     if attribute == False:
-        flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+        flexias = {'um': '1SG', 'i': '2SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
         for flexia in flexias:
             if word == stem+flexia:
                 attribute = 'PRS.'+gender+'-'+flexias[flexia]
@@ -417,10 +421,11 @@ def isitpraestem(word, stem, y):
     #возвращаем глоссирование (False, если ничего не найдено)
     return attribute
 
+
 def isitpraes3sg(word, stem):
     #функция проверяет, не является ли слово глагольной формой praes3sg (для formdefinition)
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
     
     #проверяем, не является ли слово формой 3 лица ед. ч. презенса
@@ -433,11 +438,11 @@ def isitpraes3sg(word, stem):
 def isitpasttnse(word, stem, y):
     #функция проверяет, не является ли слово глагольной формой, образованной от pastmasc / pastfepl (для formdefinition)
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
     
     #нам понадобятся окончания-клитики
-    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
     
     #добавим к концу стема -j-, если он оканчивается на гласный
     stem = jification(stem)
@@ -446,7 +451,7 @@ def isitpasttnse(word, stem, y):
     for flexia in flexias:
         if word.endswith(stem+flexia):
             if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
-                if y == 4:
+                if y == pastfepl:
                     attribute = 'PST.PL-'+flexias[flexia]
                 if y == pastmasc:
                     attribute = 'PST.SG-'+flexias[flexia]
@@ -462,7 +467,7 @@ def isitpasttnse(word, stem, y):
 def isitperftnse(word, stem, y):
     #функция проверяет, не является ли слово глагольной формой, образованной от perfmasc / perffemn / perfplur (для formdefinition)
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
     
     #определяем род стема
@@ -477,12 +482,12 @@ def isitperftnse(word, stem, y):
     stem = jification(stem)
     
     #нам понадобятся окончания-клитики
-    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
+    flexias = {'um': '1SG', 'at': '2SG', 'i': '3SG', '': '3SG', 'ām': '1PL', 'et': '2PL', 'en': '3PL'}
     
     #проверяем, не является ли слово одной из форм
     for flexia in flexias:
         
-        #перфекта
+        #перфект
         if word == stem+flexia:
             if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
                 if y == perfplur:
@@ -491,7 +496,7 @@ def isitperftnse(word, stem, y):
                 if y == perfmasc or y == perffemn:
                     attribute = 'PRF.'+gender+'-'+flexias[flexia]
         
-        #плюсквамперфекта
+        #плюсквамперфект
         if word == stem+'at'+flexia or word == stem+'it'+flexia:
             if flexias[flexia] == '1PL' or flexias[flexia] == '2PL' or flexias[flexia] == '3PL':
                 if y == perfplur:
@@ -517,7 +522,7 @@ def isitperftnse(word, stem, y):
 def isitinfinite(word, stem, y):
     #функция проверяет, не является ли слово глагольной формой, образованной от infinite (для formdefinition)
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
     
     #определяем род стема
@@ -547,7 +552,7 @@ def isitinfinite(word, stem, y):
 def isitcontract(word, stem):
     #функция проверяет, не является ли слово стяжённой формой praesstem (для verbfind)
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
     
     #нам понадобится список гласных
@@ -650,8 +655,8 @@ def formdefinition(word, stem, y):
     return attributes
 
 def nedostatochny_stem(stems):
-    #функция определяет, не является ли глагол недостаточным, то есть не имеющим некоторых форм (тогда на их месте стоит дефис)
     
+    #функция определяет, не является ли глагол недостаточным, то есть не имеющим некоторых форм (тогда на их месте стоит дефис)
     nedost = False
     if '-' in stems or '—' in stems or '−' in stems:
         nedost = True
@@ -669,33 +674,33 @@ def irreg(word, stroki):
         b = b.replace('\n', '')
         irregulars[a] = b
     
-    #по умолчанию значение глоссирования — False, т.е. токен не соответствует формам, образованным от этого стема
+    #по умолчанию значение глоссирования — False, что сигнализирует о том, что формам этого стема токен не соответствует
     attribute = False
-    
     for irrform in irregulars:
+        #irrform = delong(irrform, delongneed)
         if irrform == word:
             attribute = irregulars[irrform]
     
     #возвращаем глоссирование (False, если ничего не найдено)
     return attribute
 
-def verbfind(text, vocab):
+def verbfind(text, vocab, delongneed):
     #это основная функция для поиска глагольных форм в тексте
     
     #читаем все нерегулярные глаголы из отдельного файла irreg.txt, помещаем его строчки в irregularwordlines
     with open('irreg.txt', 'r', encoding='utf-8') as f:
         irregularwordlines = f.readlines()
     
-    #iwords — список номеров символов текста, с которых начинаются слова, плюс номер конца текста (в тексте 'First second' iwords = [0, 6, 12])
+    #iwords — список номеров символов текста, с которых начинаются слова, плюс номер конца текста (в тексте 'First second' iwords = [0, 6, 12]
     iwords = spacedivision(text)
     
     #glossboxes — список, который собирает все найденные в тексте глоссирования
     glossboxes = []
     
-    #приступим к поиску основ, перебираем все найденные токены с помощью iwords
+    #приступим к поиску основ
     for a in range(len(iwords)-1):
         
-        #word — это фрагмент строки от одного iwords до другого, т.е. токен
+        #word — это фрагмент строки от одного iwords до другого
         #например, при первой итерации цикла для текста 'First second' word будет 'First '
         word = text[iwords[a]:iwords[a+1]]
         
@@ -705,8 +710,9 @@ def verbfind(text, vocab):
         #очистим слово от мусора — пробелов и висящих в начале и конце знаках препинаний — и будем использовать его для определения формы
         wordnew = wordclean(word)
         
-        #если то, что осталось после очистки — нормальное слово, а не пустая строка, то продолжаем
+        #если то, что осталось после очистки — нормальное слово, а не пустая строка, то продолжаем и убираем из токена долготы
         if realword(wordnew):
+            wordnew = delong(wordnew, delongneed)
             
             #glossfoundsinword — переменная, которая для каждой итерации цикла собирает найденные в токене глоссирования, а потом пакует их и передаёт в glossboxes
             glossfoundsinword = []
@@ -714,20 +720,21 @@ def verbfind(text, vocab):
             #для каждой лексемы в словаре:
             for x in range(len(vocab)):
                 
-                #для каждого стема в лексеме:
+                #для каждого индекса стема в лексеме:
                 for y in range(len(vocab[x])):
                     
-                    #если этот стем недостаточный, не трогаем его; в противном случае:
+                    #если этот стем недостаточный, не трогаем его
                     if not nedostatochny_stem(vocab[x][y]):
                         
                         #для каждой вариации стема:
                         for z in range(len(vocab[x][y])):
                             
-                            #если мы нашли наш стем в токене:
-                            if vocab[x][y][z] in wordnew:
+                            #если мы нашли наш стем в токене
+                            stem = delong(vocab[x][y][z], delongneed)
+                            if stem in wordnew:
                                 
-                                #отправляем токен, стем и его индекс на поиск формы в функцию formdefinition и получаем attributes — глоссирование
-                                attributes = formdefinition(wordnew, vocab[x][y][z], y)
+                                #отправляем токен, стем и его индекс на поиск формы и получаем attributes — глоссирование
+                                attributes = formdefinition(wordnew, stem, y)
                                 
                                 #если какие-то глоссирования нашлись, т.е. список не пустой:
                                 if not attributes == []:
@@ -737,21 +744,22 @@ def verbfind(text, vocab):
                                         if vocab[x][lemma][0] != '—':
                                             attribute = vocab[x][lemma][0]+' > '+attribute
                                         
-                                        #складываем все найденные глоссирования в glossfoundsinword
+                                        #складываем все глоссирования в glossfoundsinword
                                         glossfoundsinword.append(attribute)
                 
-                #стяжённые формы не получится найти поиском соответствия, так как стем там не представлен полностью
+                #стяжённые формы не получится найти поиском соответствия, так как корень там не представлен полностью
                 #поэтому стяжённые формы ищутся особым способом
                 #сначала проверим, что токен вообще может быть такой формой: он должен оканчиваться на одно из окончаний -m-, -en- или -et-
                 if wordnew.endswith('m') or wordnew.endswith('en') or wordnew.endswith('et'):
                     
-                    #если этот стем недостаточный, не трогаем его; в противном случае:
+                    #если этот стем недостаточный, не трогаем его
                     if not nedostatochny_stem(vocab[x][0]):
                         
                         #для каждой вариации стема:
                         for stem in vocab[x][0]:
+                            stem = delong(stem, delongneed)
                             
-                            #проверим ещё, присутствует ли в токене «стяжённый» стем, т.е. без двух последних символов (an для стема anak)
+                            #проверим ещё, присутствует ли в токене «стяжённый» стем
                             if stem[0:len(stem)-2] in wordnew:
                                 
                                 #отправляем токен, стем и его индекс на поиск формы и получаем attributes — глоссирование
@@ -773,8 +781,6 @@ def verbfind(text, vocab):
                     
                     #отправляем токен и словарик нерегулярных глаголов на поиск формы и получаем attributes — глоссирование
                     attribute = irreg(wordnew, irregularwordlines)
-                    
-                    #складываем глоссирование в glossfoundsinword
                     if not attribute == False:
                         glossfoundsinword.append(attribute)
             
@@ -834,6 +840,8 @@ def output(text, glossboxes):
 def interface():
     #это «интерфейс» — основная функция всего, которая запускает парсер и осуществляет взаимодействие с пользователем
     
+    delongneed = True
+    
     #построим словарь с помощью специальной функции
     vocab = systembuilding()
     
@@ -858,7 +866,7 @@ def interface():
         text = textreading(orthoneed)
         
         #ищем глаголы в тексте и складываем глоссирования в glossboxes
-        glossboxes = verbfind(text, vocab)
+        glossboxes = verbfind(text, vocab, delongneed)
         
         #добавляем glossboxes в текст и выводим его
         output(text, glossboxes)
@@ -878,5 +886,3 @@ if everythingalright():
 else:
     print('Sadly, it seems some of the files necessary for the parser are missing. Please download the latest version of the parser from here: https://github.com/iurmak/shughni .')
     exit = input()
-
-#спасибо что дочитали ;)
